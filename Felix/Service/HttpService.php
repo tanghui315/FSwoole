@@ -27,6 +27,7 @@ class HttpService
     public  $currentFd;
     protected $headerInfo;
     public $requests = array();
+    public $log;
     /**
      * @var \swoole_server
      */
@@ -41,6 +42,15 @@ class HttpService
     function setCharset($charset)
     {
         $this->charset = $charset;
+    }
+
+    /**
+     * 设置Logger
+     * @param $log
+     */
+    function setLogger($log)
+    {
+        $this->log = $log;
     }
 
     function  onConnect($serv, $client_id, $from_id)

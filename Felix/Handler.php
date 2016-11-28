@@ -28,6 +28,7 @@ class Handler{
     public $head;
     public $cookie;
     public $body;
+    public $log;
 
     public $http_protocol = 'HTTP/1.1';
     public $http_status = 200;
@@ -105,6 +106,15 @@ class Handler{
         self::$static_dir = array_flip(explode(',', $config['static_dir']));
         self::$static_ext = array_flip(explode(',', $config['static_ext']));
 
+    }
+
+    /**
+     * 设置Logger
+     * @param $log
+     */
+    function setLogger($log)
+    {
+        $this->log = $log;
     }
 
     //请求开始

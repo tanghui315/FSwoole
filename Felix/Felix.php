@@ -87,6 +87,7 @@ class Felix{
             if(is_file($handlerFile)){
                 $fclass='App\Handler\\'.$class_name;
                 $handler=new $fclass;
+                $handler->setLogger($server->log);
                 $handler->beforeAction($info,$webserverConfig);
                 $server->setOnTask($handler->onTask);
                // $handler->init($server);
@@ -112,7 +113,9 @@ class Felix{
             $this->config=$config;
             //初始化数据库连接
             Felix\Database\MysqlDb::init($config['mysql']);
+            //启动http服务
             $this->http_server=new Felix\Service\HttpService($config["swoole_server"]);
+            $this->http_server->setLogger(new \Felix\Log\FileLog($config["log"]));
             $this->http_server->onRequest(function($server){
                  $this->processRoute($server,$this->config["route"],$this->config["web_server"]);
             });

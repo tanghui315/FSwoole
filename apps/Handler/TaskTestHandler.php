@@ -12,8 +12,6 @@ use Felix;
 class TaskTestHandler extends Felix\Handler{
 
     public function get(){
-
-
         self::$serv->task(['cmd'=>'save','data'=>"this is test".self::$currentFd]);
         $this->response("<h1>this is ok</h1>");
     }
