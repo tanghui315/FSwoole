@@ -73,7 +73,6 @@ class FileLog extends \Felix\Log
         }
 
         $this->fp = $this->openFile($this->log_file);
-
         parent::__construct($config);
     }
 
@@ -170,7 +169,12 @@ class FileLog extends \Felix\Log
                 rename($this->log_file, $new_log_file);
                 $this->fp = fopen($this->log_file, 'a+');
             }
+            if(empty($this->fp)){
+                $this->fp = $this->openFile($this->log_file);
+            }
             fputs($this->fp, $log_str);
+
+
         }
 
         $this->queue = array();

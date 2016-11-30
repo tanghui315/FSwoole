@@ -147,6 +147,11 @@ class Handler{
         $this->head[$key] = $value;
     }
 
+    //异步任务
+    function task($data){
+        $taskData=array_merge($data,['handler'=>$this]);
+        self::$serv->task($taskData);
+    }
 
     /**
      * 添加http header
@@ -410,6 +415,7 @@ class Handler{
     {
         //任务处理
     }
+
 
 
 }

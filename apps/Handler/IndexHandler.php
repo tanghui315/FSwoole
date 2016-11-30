@@ -23,10 +23,4 @@ class IndexHandler extends Felix\Handler{
     public function post(){
 
     }
-
-
-    public function onTask($serv,$task_id,$from_id,$data)
-    {
-
-    }
 }

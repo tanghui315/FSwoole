@@ -13,6 +13,7 @@ class Felix{
     protected $config=array();
     protected $http_server;
     public  $redis;
+    protected $current_handler;
     protected $tag=false;
     /**
      * 初始化
@@ -63,7 +64,6 @@ class Felix{
     //路由处理
     private function processRoute($server,$routeConfig,$webserverConfig){
         $info=$server->currentRequest;
-        var_dump($info);
         $fhandler=new Felix\Handler;
         $fhandler->init($server,$webserverConfig);
         if(!empty($routeConfig)){
@@ -82,15 +82,12 @@ class Felix{
             $class_name=$routeConfig[$url];
 
             $handlerFile=self::$app_path . '/Handler/' . $class_name . '.php';
-            var_dump($handlerFile);
             //判断是否为动态处理文件
             if(is_file($handlerFile)){
                 $fclass='App\Handler\\'.$class_name;
                 $handler=new $fclass;
                 $handler->setLogger($server->log);
                 $handler->beforeAction($info,$webserverConfig);
-                $server->setOnTask($handler->onTask);
-               // $handler->init($server);
                 if($info->meta['method']=="GET"){
                     $handler->get();
                 }elseif($info->meta['method']=="POST"){

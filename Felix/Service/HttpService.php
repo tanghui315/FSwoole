@@ -23,7 +23,7 @@ class HttpService
         'dispatch_mode' => 3,
     );
     protected $_onRequest;
-    protected $_onTask;
+    static  $_onTask;
     public  $currentFd;
     protected $headerInfo;
     public $requests = array();
@@ -241,12 +241,22 @@ class HttpService
     //异步任务
     function onTask($serv,$task_id,$from_id,$data)
     {
-        call_user_func($this->_onTask,$serv,$task_id,$from_id,$data);
+
+        if(isset($data['handler'])){
+            $data['handler']->onTask($serv,$task_id,$from_id,$data);
+        }
+        return ;
+        //call_user_func(self::$_onTask,$serv,$task_id,$from_id,$data);
     }
 
-    function setOnTask($callback)
+    public function onFinish($serv,$task_id, $data) {
+        echo "Task {$task_id} finish\n";
+        echo "Result: {$data}\n";
+    }
+
+    public function setOnTask($callback)
     {
-        $this->_onTask=$callback;
+        self::$_onTask=$callback;
     }
     /**
      * 解析请求
@@ -312,6 +322,7 @@ class HttpService
         $server->on('Receive', array($this, 'onReceive'));
         if(isset($this->config['task_worker_num'])){
             $server->on('Task',array($this,'onTask'));
+            $server->on('Finish', array($this, 'onFinish'));
         }
         $server->on('Close', array($this, 'onClose'));
         $server->set($this->config);

@@ -31,7 +31,7 @@ return [
       "type"=>"file", //另一种是 echo  代表直接输出到控制台
         "file"=>"felix.log",//日志文件名
         "dir"=>__DIR__."/../tmp/",
-        "date"=>false, //是否按照日期生成
+        "date"=>true, //是否按照日期生成
         "verbose"=>false, //如果为真，会显示函数调用信息
         "enable_cache"=>false,// 开启文件缓存
         "cut_file"=>false,//是否对日志文件做分片存储
@@ -46,5 +46,6 @@ return [
     "route"=>[
         "/"=>"IndexHandler",
         "/info"=>"InfoHandler",
+        "/test_task"=>"TaskTestHandler",
     ],
 ];
