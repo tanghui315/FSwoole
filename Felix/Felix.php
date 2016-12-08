@@ -38,7 +38,7 @@ class Felix{
             self::$app_path = __DIR__ . '/../apps';
         }
         define('APPSPATH', self::$app_path);
-        Felix\Loader::addNameSpace('App', self::$app_path . '/');
+        Felix\Loader::addNameSpace('app', self::$app_path . '/');
 
     }
 
@@ -81,10 +81,10 @@ class Felix{
             }
             $class_name=$routeConfig[$url];
 
-            $handlerFile=self::$app_path . '/Handler/' . $class_name . '.php';
+            $handlerFile=self::$app_path . '/handler/' . $class_name . '.php';
             //判断是否为动态处理文件
             if(is_file($handlerFile)){
-                $fclass='App\Handler\\'.$class_name;
+                $fclass='app\handler\\'.$class_name;
                 $handler=new $fclass;
                 $handler->setLogger($server->log);
                 $handler->beforeAction($info,$webserverConfig);
@@ -104,6 +104,94 @@ class Felix{
         return $this->tag;
     }
 
+    //路由处理，参照YII
+    private function processRouteAction($server,$webserverConfig){
+        $info=$server->currentRequest;
+        $fhandler=new Felix\Handler;
+        $fhandler->init($server,$webserverConfig);
+        $url=strtolower($info->meta['path']);
+        $handlerAction="";
+        $fclass="";
+        if($url == "/"){ //首页处理
+            $handlerFile=self::$app_path . '/handler/IndexHandler.php';
+            if(!is_file($handlerFile)){
+                $fhandler->httpError(404);
+                $this->tag=false;
+                return $this->tag;
+            }
+            $fclass='app\handler\\'."IndexHandler";
+            $handlerAction="indexAction";
+        }else{
+            //是否为静态文件
+            if($fhandler->doStaticRequest($info))
+            {
+                return $fhandler->response();
+            }
+            //动态路由处理
+            $path = explode('/', trim($info->meta['path'], '/'));
+            if(count($path)<3){ //证明不是模块
+                $cword=ucfirst($path[0]);
+                $fclass='app\handler\\'."{$cword}Handler";
+                $handlerFile=self::$app_path."/handler/{$cword}Handler.php";
+                if(!is_file($handlerFile)){
+                    $fhandler->httpError(404);
+                    $this->tag=false;
+                    return $this->tag;
+                }
+                if(!isset($path[1])){
+                    $handlerAction="indexAction";
+                }else {
+                    $class_reflect = new ReflectionClass($fclass);
+                    $action_name = strtolower($path[1] . "action");
+                    foreach ($class_reflect->getMethods() as $method) {
+                        $cMName = $method->getName();
+                        $tmpName = strtolower($cMName);
+                        if ($action_name == $tmpName) {
+                            $handlerAction = $cMName;
+                        }
+                    }
+                }
+            }else{ //模块处理
+                $modName=strtolower($path[0]);
+                $cword=ucfirst($path[1]);
+                $fclass="app\\modules\\{$modName}\\"."{$cword}Handler";
+                $handlerFile=self::$app_path."/modules/{$modName}/{$cword}Handler.php";
+                if(!is_file($handlerFile)){
+                    $fhandler->httpError(404);
+                    $this->tag=false;
+                    return $this->tag;
+                }
+                if(!isset($path[2])){
+                    $handlerAction="indexAction";
+                }else{
+                    $class_reflect = new ReflectionClass($fclass);
+                    $action_name=strtolower($path[2]."action");
+                    foreach($class_reflect->getMethods() as $method){
+                        $cMName=$method->getName();
+                        $tmpName=strtolower($cMName);
+                        if($action_name == $tmpName){
+                            $handlerAction=$cMName;
+                        }
+                    }
+                }
+            }
+        }
+        if(!empty($handlerAction)){
+            $handler=new $fclass;
+            $handler->setLogger($server->log);
+            $handler->beforeAction($info,$webserverConfig);
+            $handler->$handlerAction();
+            $this->tag=true;
+        }else{
+            $fhandler->httpError(404);
+            $this->tag=false;
+        }
+
+        return $this->tag;
+
+
+    }
+
     //运行http服务
     function runHttpServer($config = array(),$host = '0.0.0.0', $port = 9898)
     {
@@ -114,7 +202,7 @@ class Felix{
             $this->http_server=new Felix\Service\HttpService($config["swoole_server"]);
             $this->http_server->setLogger(new \Felix\Log\FileLog($config["log"]));
             $this->http_server->onRequest(function($server){
-                 $this->processRoute($server,$this->config["route"],$this->config["web_server"]);
+                 $this->processRouteAction($server,$this->config["web_server"]);
             });
             $this->http_server->run($host,$port);
     }

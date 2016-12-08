@@ -245,13 +245,14 @@ class HttpService
         if(isset($data['handler'])){
             $data['handler']->onTask($serv,$task_id,$from_id,$data);
         }
-        return ;
+        return $data;
         //call_user_func(self::$_onTask,$serv,$task_id,$from_id,$data);
     }
 
-    public function onFinish($serv,$task_id, $data) {
-        echo "Task {$task_id} finish\n";
-        echo "Result: {$data}\n";
+    function onFinish($serv,$task_id, $data) {
+        if(isset($data['handler'])){
+            $data['handler']->onFinish($serv,$task_id, $data);
+        }
     }
 
     public function setOnTask($callback)

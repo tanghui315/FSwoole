@@ -129,9 +129,13 @@ class Handler{
     {
         if (!self::$keepalive or $this->head['Connection'] == 'close')
         {
-            self::$serv->close($this->request->fd);
+            if(empty($this->request)){
+                self::$serv->close(self::$currentFd);
+            }else{
+                self::$serv->close($this->request->fd);
+            }
         }
-        $this->request->unsetGlobal();
+       // $this->request->unsetGlobal();
         //清空request缓存区
        // unset($this->requests[$request->fd]);
         unset($request);
@@ -393,7 +397,9 @@ class Handler{
         $out = $this->getHeader().$this->body;
         $ret = self::$serv->send(self::$currentFd, $out);
         $this->head['Connection']="close";
-        $this->afterAction();
+        //if($this->http_status != 404) {
+            $this->afterAction();
+       // }
         return $ret;
 
     }
@@ -414,6 +420,11 @@ class Handler{
     function onTask($serv,$task_id,$from_id,$data)
     {
         //任务处理
+    }
+
+
+    function onFinish($serv,$task_id, $data) {
+        //任务结束
     }
 
 
