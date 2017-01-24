@@ -29,6 +29,7 @@ class Handler{
     public $cookie;
     public $body;
     public $log;
+    public $smarty;
 
     public $http_protocol = 'HTTP/1.1';
     public $http_status = 200;
@@ -355,7 +356,7 @@ class Handler{
         return $ret;
     }*/
 
-    function response($content="")
+    function response($content="",$isjson=false)
     {
         if(!empty($content)){
             $this->body=$content;
@@ -365,6 +366,11 @@ class Handler{
         {
             $this->head['Date'] = gmdate("D, d M Y H:i:s T");
         }
+        if($isjson)
+        {
+            $this->head['Content-Type'] = 'application/json';
+        }
+
         if (!isset($this->head['Connection']))
         {
             //keepalive
@@ -393,7 +399,8 @@ class Handler{
             $this->head['Content-Encoding'] = 'deflate';
             $this->body = \gzdeflate($this->body, isset($this->config['gzip_level'])?$this->config['gzip_level']:1);
         }
-       //var_dump($this->getHeader());
+
+        //echo $this->head['Content-Type'];
         $out = $this->getHeader().$this->body;
         $ret = self::$serv->send(self::$currentFd, $out);
         $this->head['Connection']="close";
@@ -415,6 +422,14 @@ class Handler{
             $this->response($content);
         }
 
+    }
+
+    //模版呈现
+    function render($src,$data)
+    {
+        $this->smarty->assign($data);
+        $output=$this->smarty->fetch($src);
+        $this->response($output);
     }
 
     function onTask($serv,$task_id,$from_id,$data)

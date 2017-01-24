@@ -8,12 +8,14 @@
 
 return [
     "swoole_server"=>[
-        "max_request"=>200000,
+        "max_request"=>256,
         "worker_num"=>2,
         "keepalive"=>1,
-        "task_worker_num"=>100,
+        "task_worker_num"=>200,
         "daemonize"=>false,
         "pid_file"=>__DIR__."/http_server.pid",
+        "ssl_cert_file"=>"",
+        "ssl_key_file"=>"",  //https证书
     ],
     "web_server"=>[
         "document_root"=>__DIR__."/../",
@@ -37,15 +39,16 @@ return [
         "cut_file"=>false,//是否对日志文件做分片存储
     ],
     "mysql"=>[
+        'enabled'=>false,
         'host' => '192.168.32.121',
         'port' => 3306,
         'dbname' => 'felix',
         'user' => 'root',
         'pass' => 'EV6ZeYVa'
     ],
-    "route"=>[
-        "/"=>"IndexHandler",
-        "/info"=>"InfoHandler",
-        "/test_task"=>"TaskTestHandler",
-    ],
+    "redis"=>[
+        'enabled'=>false,
+        'host'=>'127.0.0.1',
+        'port'=>6379
+    ]
 ];

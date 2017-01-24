@@ -15,9 +15,11 @@ class Felix{
     public  $redis;
     protected $current_handler;
     protected $tag=false;
+
+    public $smarty;
     /**
      * 初始化
-     * @return Swoole
+     * @return Felix
      */
     static function getInstance()
     {
@@ -129,6 +131,7 @@ class Felix{
             }
             //动态路由处理
             $path = explode('/', trim($info->meta['path'], '/'));
+            //print_r($path);
             if(count($path)<3){ //证明不是模块
                 $cword=ucfirst($path[0]);
                 $fclass='app\handler\\'."{$cword}Handler";
@@ -152,8 +155,9 @@ class Felix{
                     }
                 }
             }else{ //模块处理
-                $modName=strtolower($path[0]);
-                $cword=ucfirst($path[1]);
+                //0  是flag 标记
+                $modName=strtolower($path[1]);
+                $cword=ucfirst($path[2]);
                 $fclass="app\\modules\\{$modName}\\"."{$cword}Handler";
                 $handlerFile=self::$app_path."/modules/{$modName}/{$cword}Handler.php";
                 if(!is_file($handlerFile)){
@@ -161,11 +165,11 @@ class Felix{
                     $this->tag=false;
                     return $this->tag;
                 }
-                if(!isset($path[2])){
+                if(!isset($path[3])){
                     $handlerAction="indexAction";
                 }else{
                     $class_reflect = new ReflectionClass($fclass);
-                    $action_name=strtolower($path[2]."action");
+                    $action_name=strtolower($path[3]."action");
                     foreach($class_reflect->getMethods() as $method){
                         $cMName=$method->getName();
                         $tmpName=strtolower($cMName);
@@ -179,6 +183,7 @@ class Felix{
         if(!empty($handlerAction)){
             $handler=new $fclass;
             $handler->setLogger($server->log);
+            $handler->smarty=$this->smarty;
             $handler->beforeAction($info,$webserverConfig);
             $handler->$handlerAction();
             $this->tag=true;
@@ -193,13 +198,29 @@ class Felix{
     }
 
     //运行http服务
-    function runHttpServer($config = array(),$host = '0.0.0.0', $port = 9898)
+    function runHttpServer($config = array(),$host = '0.0.0.0', $port = 9889)
     {
             $this->config=$config;
             //初始化数据库连接
-            Felix\Database\MysqlDb::init($config['mysql']);
+            if($config['mysql']['enabled']){
+                Felix\Database\MysqlDb::init($config['mysql']);
+            }
+
+            if($config['redis']['enabled']){
+                Felix\Database\FRedis::init($config['redis']);
+            }
+            //初始化模版引擎
+            $this->smarty = new Smarty;
+            $this->smarty->debugging = true;
+            $this->smarty->caching = true;
+            $this->smarty->cache_lifetime = 120;
+            $this->smarty->template_dir = WEBPATH.'/apps/templates/';
+            $this->smarty->compile_dir = WEBPATH.'/apps/templates/templates_c/';
+            //$this->smarty->config_dir = '/web/www.mydomain.com/smarty/guestbook/configs/';
+            $this->smarty->cache_dir = WEBPATH.'/apps/templates//cache/';
             //启动http服务
-            $this->http_server=new Felix\Service\HttpService($config["swoole_server"]);
+            define('FELIX_SERVER', true);
+            $this->http_server=new Felix\Service\HttpService($config);
             $this->http_server->setLogger(new \Felix\Log\FileLog($config["log"]));
             $this->http_server->onRequest(function($server){
                  $this->processRouteAction($server,$this->config["web_server"]);

@@ -11,13 +11,18 @@ use Felix;
 
 class TaskTestHandler extends Felix\Handler{
 
-    public function get(){
+    public function indexAction(){
         //print_r($this->request);
         $this->task(['cmd'=>'save','data'=>"this is test"]);
+        $this->task(['cmd'=>'save','data'=>"this is test"]);
+        $result=$this->taskwait(['cmd'=>'save','data'=>"this is test"],10);
+        if(!$result){
+
+        }
         $this->response("<h1>this is ok</h1>");
     }
 
-    public function onTask($serv,$task_id,$from_id,$data)
+    public function onTask($serv,$task_id,$from_id,$data)//线程
     {
         if($data['cmd']=="save"){
             echo "my test by task : {$task_id} \n";

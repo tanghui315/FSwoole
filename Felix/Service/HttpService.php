@@ -19,9 +19,7 @@ class HttpService
     protected $buffer_header = array();
     public  $currentRequest;
     public  $redis=null;
-    protected $config = array(
-        'dispatch_mode' => 3,
-    );
+    protected $config = [];
     protected $_onRequest;
     static  $_onTask;
     public  $currentFd;
@@ -32,7 +30,7 @@ class HttpService
      * @var \swoole_server
      */
     public $serv;
-
+    public $currentHandler;
 
     function __construct($config = array())
     {
@@ -312,22 +310,78 @@ class HttpService
     }
     function daemon()
     {
-        $this->config['daemonize'] = 1;
+        $this->config['swoole_server']['daemonize'] = 1;
     }
     function run($host = '0.0.0.0', $port = 9999)
     {
-        register_shutdown_function(array($this, 'handleFatal'));
+       // register_shutdown_function(array($this, 'handleFatal'));
+        set_error_handler(array($this, 'onErrorHandle'), E_USER_ERROR);
+        register_shutdown_function(array($this, 'onErrorShutDown'));
         $server = new \swoole_server($host, $port);
         $this->serv = $server;
         $server->on('Connect', array($this, 'onConnect'));
         $server->on('Receive', array($this, 'onReceive'));
-        if(isset($this->config['task_worker_num'])){
+        if(isset($this->config['swoole_server']['task_worker_num'])){
             $server->on('Task',array($this,'onTask'));
             $server->on('Finish', array($this, 'onFinish'));
         }
         $server->on('Close', array($this, 'onClose'));
-        $server->set($this->config);
+        $server->set($this->config['swoole_server']);
         $server->start();
+    }
+
+
+    /**
+     * 捕获register_shutdown_function错误
+     */
+    function onErrorShutDown()
+    {
+        $error = error_get_last();
+        if (!isset($error['type'])) return;
+        switch ($error['type'])
+        {
+            case E_ERROR :
+            case E_PARSE :
+            case E_USER_ERROR:
+            case E_CORE_ERROR :
+            case E_COMPILE_ERROR :
+                break;
+            default:
+                return;
+        }
+        $this->errorResponse($error);
+    }
+
+    /**
+     * 捕获set_error_handle错误
+     */
+    function onErrorHandle($errno, $errstr, $errfile, $errline)
+    {
+        $error = array(
+            'message' => $errstr,
+            'file' => $errfile,
+            'line' => $errline,
+        );
+        $this->errorResponse($error);
+    }
+
+    /**
+     * 错误显示
+     * @param $error
+     */
+    private function errorResponse($error)
+    {
+        $errorMsg = "{$error['message']} ({$error['file']}:{$error['line']})";
+        $message = Felix\Error::info("FSwooleFramework"." Application Error", $errorMsg);
+        if (empty($this->currentHandler))
+        {
+            $this->currentHandler = new Felix\Handler();
+            $this->currentHandler->init($this,$this->config['web_server']);
+        }
+        $this->currentHandler->setHttpStatus(500);
+        $this->currentHandler->body = $message;
+        $this->currentHandler->body = (defined('DEBUG') && DEBUG == 'on') ? $message : '';
+        $this->currentHandler->response();
     }
 
     /**

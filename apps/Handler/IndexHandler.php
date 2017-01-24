@@ -19,4 +19,8 @@ class IndexHandler extends Felix\Handler{
         $this->response("<h1>hello Felix Framework,This is Index Page.</h1>");
     }
 
+    public  function jsonAction(){
+        $this->response(json_encode(['dd'=>'hello','ff'=>'FSwoole']),true);
+    }
+
 }
