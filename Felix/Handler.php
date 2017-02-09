@@ -24,13 +24,13 @@ class Handler{
     static $gzip=false;
     static $expire=false;
     public $config=[];
-
+    public $query_builder =true;  //启用查询建立
     public $head;
     public $cookie;
     public $body;
     public $log;
     public $smarty;
-
+    public $db;
     public $http_protocol = 'HTTP/1.1';
     public $http_status = 200;
     public $request;
@@ -89,6 +89,7 @@ class Handler{
 
     function init($server,$config)
     {
+        $config=$config['web_server'];
         self::$serv=$server->serv;
         self::$currentFd=$server->currentFd;
         if(isset($config['document_root'])){
@@ -224,6 +225,53 @@ class Handler{
         $this->head['Pragma'] = 'no-cache';
     }
 
+/*    //文件处理保存上传的文件
+    function saveFile()
+    {
+        $bin=$this->request->body;
+        //echo $bin;
+        if(!empty($bin)){
+            $strInfo=@unpack('c2chars',$bin);
+            $typeCode=intval($strInfo['chars1'].$strInfo['chars2']);
+            echo $strInfo['chars1'].$strInfo['chars2'];
+            echo $typeCode;
+            switch ($typeCode){
+                case 7790:
+                    $fileType='exe';
+                    break;
+                case 7784:
+                    $fileType='midi';
+                    break;
+                case 8297:
+                    $fileType='rar';
+                    break;
+                case 255216:
+                    $fileType='jpg';
+                    break;
+                case 7173:
+                    $fileType='gif';
+                    break;
+                case 6677:
+                    $fileType='bmp';
+                    break;
+                case 13780:
+                    $fileType='png';
+                    break;
+                default:
+                    $fileType='';
+                    break;
+            }
+            echo $fileType;
+            if(!empty($fileType)){
+                $filename=time().'.'.$fileType;
+                echo $filename;
+                \Felix\Helper::saveFile(WEBPATH."upload/".$filename,$bin);
+            }
+
+        }
+        return false;
+    }*/
+
     /**
      * 设置COOKIE
      * @param $name
@@ -296,7 +344,7 @@ class Handler{
             $read_file = true;
             if (self::$expire)
             {
-                $expire = intval(isset($this->config['expire_time'])?$this->config['expire_time']:1800);
+                $expire = intval(isset($this->config['web_server']['expire_time'])?$this->config['web_server']['expire_time']:1800);
                 $fstat = stat($path);
                 //过期控制信息
                 if (isset($request->header['If-Modified-Since']))
@@ -334,27 +382,62 @@ class Handler{
             return false;
         }
     }
-  /*  function response($respData, $code = 200)
+
+    //加载数据库
+    function loadDB($active_group="",$return = FALSE){
+
+        $dataBaseConfig=$this->config['database'];
+        require_once(BASEPATH.'Felix/Database/DB.php');
+
+        if ($return === TRUE)
+        {
+            return DB($dataBaseConfig, $this->query_builder,$active_group);
+        }
+
+        $this->db=& DB($dataBaseConfig, $this->query_builder,$active_group);
+
+    }
+
+    // 加载模型
+
+    function loadModel($name)
     {
+        if(empty($name)){
+            return false;
+        }
+        $path = '';
 
-        $headerInfo['Content-Type'] = 'text/html; charset='.$this->charset;
+        // Is the model in a sub-folder? If so, parse out the filename and path.
+        if (($last_slash = strrpos($name, '/')) !== FALSE)
+        {
+            // The path is in front of the last slash
+            $path = substr($name, 0, ++$last_slash);
 
-        $response = implode("\r\n", array(
-            'HTTP/1.1 '.$code.' '.$this->HttpStatus[$code],
-            'Cache-Control: must-revalidate,no-cache',
-            'Content-Language: zh-CN',
-            'Server: felix-2.0',
-            'Content-Type: '.$headerInfo['Content-Type'],
-            'Content-Length: ' . strlen($respData),
-            '',
-            $respData));
-       // var_dump($this->serv);
-//        var_dump($this->currentFd);
-//        return false;
-        $ret=self::$serv->send(self::$currentFd, $response);
-        self::$serv->close(self::$currentFd);
-        return $ret;
-    }*/
+            // And the model name behind it
+            $name = substr($name, $last_slash);
+        }
+
+        if(empty($this->db))
+        {
+            $this->loadDB();
+        }
+
+        $model = ucfirst($name);
+        $filePath =BASEPATH."apps/models/".$path.$model."Model.php";
+        if(!file_exists($filePath)){
+            log_message("modelErr",$path.$name." file not find");
+            return false;
+        }
+        if(empty($path))
+            $class="app\\models\\".$model."Model";
+        else
+            $class="app\\models\\".$path."\\". $model."Model";
+
+        $this->$name = new $class();
+        $this->$name->db=$this->db;
+        return true;
+    }
+
 
     function response($content="",$isjson=false)
     {
@@ -368,7 +451,7 @@ class Handler{
         }
         if($isjson)
         {
-            $this->head['Content-Type'] = 'application/json';
+            $this->head['Content-Type'] = 'application/json;charset='.$this->charset;
         }
 
         if (!isset($this->head['Connection']))
@@ -397,7 +480,7 @@ class Handler{
         if (self::$gzip)
         {
             $this->head['Content-Encoding'] = 'deflate';
-            $this->body = \gzdeflate($this->body, isset($this->config['gzip_level'])?$this->config['gzip_level']:1);
+            $this->body = \gzdeflate($this->body, isset($this->config['web_server']['gzip_level'])?$this->config['web_server']['gzip_level']:1);
         }
 
         //echo $this->head['Content-Type'];
@@ -420,6 +503,15 @@ class Handler{
             $this->response("<h1>Page Not Found</h1><hr />Felix Web Server ");
         }else{
             $this->response($content);
+        }
+
+    }
+
+    //获取指定模型
+    function getModel($model)
+    {
+        if(empty($model)){
+            return false;
         }
 
     }

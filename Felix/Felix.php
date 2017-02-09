@@ -15,7 +15,7 @@ class Felix{
     public  $redis;
     protected $current_handler;
     protected $tag=false;
-
+    public $DB;
     public $smarty;
     /**
      * 初始化
@@ -107,10 +107,10 @@ class Felix{
     }
 
     //路由处理，参照YII
-    private function processRouteAction($server,$webserverConfig){
+    private function processRouteAction($server){
         $info=$server->currentRequest;
         $fhandler=new Felix\Handler;
-        $fhandler->init($server,$webserverConfig);
+        $fhandler->init($server,$this->config);
         $url=strtolower($info->meta['path']);
         $handlerAction="";
         $fclass="";
@@ -184,7 +184,7 @@ class Felix{
             $handler=new $fclass;
             $handler->setLogger($server->log);
             $handler->smarty=$this->smarty;
-            $handler->beforeAction($info,$webserverConfig);
+            $handler->beforeAction($info,$this->config);
             $handler->$handlerAction();
             $this->tag=true;
         }else{
@@ -201,10 +201,10 @@ class Felix{
     function runHttpServer($config = array(),$host = '0.0.0.0', $port = 9889)
     {
             $this->config=$config;
-            //初始化数据库连接
-            if($config['mysql']['enabled']){
-                Felix\Database\MysqlDb::init($config['mysql']);
-            }
+            //初始化数据库连接  不做持久化
+//            if($config['mysql']['enabled']){
+//                Felix\Database\MysqlDb::init($config['mysql']);
+//            }
 
             if($config['redis']['enabled']){
                 Felix\Database\FRedis::init($config['redis']);
@@ -216,14 +216,13 @@ class Felix{
             $this->smarty->cache_lifetime = 120;
             $this->smarty->template_dir = WEBPATH.'/apps/templates/';
             $this->smarty->compile_dir = WEBPATH.'/apps/templates/templates_c/';
-            //$this->smarty->config_dir = '/web/www.mydomain.com/smarty/guestbook/configs/';
             $this->smarty->cache_dir = WEBPATH.'/apps/templates//cache/';
             //启动http服务
             define('FELIX_SERVER', true);
             $this->http_server=new Felix\Service\HttpService($config);
             $this->http_server->setLogger(new \Felix\Log\FileLog($config["log"]));
             $this->http_server->onRequest(function($server){
-                 $this->processRouteAction($server,$this->config["web_server"]);
+                 $this->processRouteAction($server);
             });
             $this->http_server->run($host,$port);
     }

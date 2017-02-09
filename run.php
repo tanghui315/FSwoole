@@ -7,6 +7,13 @@
  */
 define('DEBUG', 'on');
 define('WEBPATH', __DIR__);
+define('BASEPATH',__DIR__."/");
+
+function log_message($level, $message)
+{
+    echo "[{$level}]{$message}\n";
+}
+
 require_once __DIR__ . '/Felix/Felix.php';
 require_once __DIR__ . '/Felix/Loader.php';
 require_once __DIR__.'/libs/smarty/libs/Smarty.class.php';

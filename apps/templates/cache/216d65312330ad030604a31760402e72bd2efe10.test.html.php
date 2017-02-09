@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.30, created on 2017-01-24 16:39:29
+/* Smarty version 3.1.30, created on 2017-02-09 10:54:15
   from "/Users/tanghui/Documents/workspace/FSwoole/apps/templates/vote/test.html" */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.30',
-  'unifunc' => 'content_588712c1a983d8_88130998',
+  'unifunc' => 'content_589bd9d74b6b87_63683818',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -18,7 +18,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   ),
   'cache_lifetime' => 120,
 ),true)) {
-function content_588712c1a983d8_88130998 (Smarty_Internal_Template $_smarty_tpl) {
+function content_589bd9d74b6b87_63683818 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <!DOCTYPE html>
 <html>

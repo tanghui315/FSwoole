@@ -12,6 +12,8 @@ class IndexHandler extends Felix\Handler{
 
     //get请求
     public function indexAction(){
+
+       print_r($this->request);
        // $word=$request->redis->get("felix");
        // $request->response("<h1>hello Felix Framework,This is Index Page.{$word}</h1>");
 //        var_dump($request);
@@ -20,7 +22,25 @@ class IndexHandler extends Felix\Handler{
     }
 
     public  function jsonAction(){
-        $this->response(json_encode(['dd'=>'hello','ff'=>'FSwoole']),true);
+
+        $this->response(json_encode(['dd'=>'hello','ff'=>'放回说的是']),true);
+    }
+
+    public function saveAction(){
+
+        $this->response("<h1>save ok </h1>");
+    }
+
+    public function uploadAction(){
+        $newFileName = time() . '.' . pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+        $path = WEBPATH.'/upload/vote/';
+        $tmp = str_replace('\\\\', '\\', $_FILES['file']['tmp_name']);
+        print_r($_FILES);
+        echo $path.$newFileName;
+        $r= copy($tmp,$path.$newFileName);
+        var_dump($r);
+
+        $this->response("<h1>upload ok </h1>");
     }
 
 }

@@ -23,4 +23,32 @@ class Helper{
         }
         return strtolower(trim(substr($s, 1)));
     }
+
+    static public function saveFile($fileName, $text) {
+        if (!$fileName || !$text)
+            return false;
+        if (self::makeDir(dirname($fileName))) {
+            if ($fp = fopen($fileName, "w")) {
+                if (@fwrite($fp, $text)) {
+                    fclose($fp);
+                    return true;
+                } else {
+                    fclose($fp);
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    static public function makeDir($dir, $mode=0755) {
+        /*function makeDir($dir, $mode="0777") { 此外0777不能加单引号和双引号，
+          加了以后，"0400" = 600权限，处以为会这样，我也想不通*/
+        if (!$dir) return false;
+        if(!file_exists($dir)) {
+            return mkdir($dir,$mode,true);
+        } else {
+            return true;
+        }
+    }
 }

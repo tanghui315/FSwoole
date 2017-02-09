@@ -20,5 +20,17 @@ class InfoHandler extends Felix\Handler{
         $this->render("vote/test.html",['title'=>'这是一个标题','msg'=>'模版内容']);
     }
 
+    //车是model
+
+    public function voteAction(){
+
+        $this->loadModel("votebase");
+
+        //$this->votebase->updateTitle(51,"顶你个肺");
+        $data=$this->votebase->getData();
+
+        return $this->response(json_encode($data),true);
+    }
+
 
 }

@@ -26,7 +26,6 @@ return [
         "gzip_level"=>1,
         "expire_open"=>1,
         "expire_time"=>1800,
-
     ],
     //日志配置
     "log"=>[
@@ -38,14 +37,39 @@ return [
         "enable_cache"=>false,// 开启文件缓存
         "cut_file"=>false,//是否对日志文件做分片存储
     ],
-    "mysql"=>[
-        'enabled'=>false,
-        'host' => '192.168.32.121',
-        'port' => 3306,
-        'dbname' => 'felix',
-        'user' => 'root',
-        'pass' => 'EV6ZeYVa'
+//    "mysql"=>[
+//        'enabled'=>false,
+//        'host' => '192.168.32.121',
+//        'port' => 3306,
+//        'dbname' => 'felix',
+//        'user' => 'root',
+//        'pass' => 'EV6ZeYVa'
+//    ],
+    //模型数据库,多库模型
+    "database"=>[
+        'default'=>array(
+            'dsn'	=> '',
+            'hostname' => '192.168.32.128',
+            'username' => 'root',
+            'password' => '123456',
+            'database' => 'applet',
+            'dbdriver' => 'mysqli',
+            'dbprefix' => '',
+            'pconnect' => false,
+            'db_debug' => false,
+            'cache_on' => false,
+            'cachedir' => '',
+            'char_set' => 'utf8',
+            'dbcollat' => 'utf8_general_ci',
+            'swap_pre' => '',
+            'encrypt' => false,
+            'compress' => false,
+            'stricton' => false,
+            'failover' => array(),
+            'save_queries' => true
+        )
     ],
+
     "redis"=>[
         'enabled'=>false,
         'host'=>'127.0.0.1',
