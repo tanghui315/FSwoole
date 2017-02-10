@@ -36,4 +36,10 @@ class VotebaseModel extends Felix\Model{
         return $this->db->insert_id();
     }
 
+
+    function sqlquery()
+    {
+        $query = $this->db->query("select * from vote_base");
+        return $query->result_array();
+    }
 }

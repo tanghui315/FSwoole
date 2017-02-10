@@ -8,18 +8,21 @@
 
 return [
     "swoole_server"=>[
-        "max_request"=>256,
+        "max_request"=>20000,
         "worker_num"=>2,
         "keepalive"=>1,
         "task_worker_num"=>200,
         "daemonize"=>false,
         "pid_file"=>__DIR__."/http_server.pid",
+        'buffer_output_size'=>9000000000,
+        'open_eof_check' => 9000000000,
+        'package_max_length' => 9000000000,
         "ssl_cert_file"=>"",
         "ssl_key_file"=>"",  //https证书
     ],
     "web_server"=>[
         "document_root"=>__DIR__."/../",
-        "static_dir"=>"static,",
+        "static_dir"=>"static,upload",
         "static_ext"=>"js,jpg,gif,png,css,html",
         "keepalive"=>1,
         "gzip_open"=>1,
@@ -37,14 +40,6 @@ return [
         "enable_cache"=>false,// 开启文件缓存
         "cut_file"=>false,//是否对日志文件做分片存储
     ],
-//    "mysql"=>[
-//        'enabled'=>false,
-//        'host' => '192.168.32.121',
-//        'port' => 3306,
-//        'dbname' => 'felix',
-//        'user' => 'root',
-//        'pass' => 'EV6ZeYVa'
-//    ],
     //模型数据库,多库模型
     "database"=>[
         'default'=>array(

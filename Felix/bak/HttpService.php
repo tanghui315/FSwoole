@@ -14,8 +14,8 @@ class HttpService
     const ST_FINISH = 1; //完成，进入处理流程
     const ST_WAIT   = 2; //等待数据
     const ST_ERROR  = 3; //错误，丢弃此包
-    const HTTP_HEAD_MAXLEN = 8192; //http头最大长度不得超过2k
-    const POST_MAXSIZE=300000;
+    const HTTP_HEAD_MAXLEN = 908192; //http头最大长度不得超过2k
+    const POST_MAXSIZE=9300000;
     protected $buffer_header = array();
     public  $currentRequest;
     public  $redis=null;
@@ -244,7 +244,6 @@ class HttpService
             $data['handler']->onTask($serv,$task_id,$from_id,$data);
         }
         return $data;
-        //call_user_func(self::$_onTask,$serv,$task_id,$from_id,$data);
     }
 
     function onFinish($serv,$task_id, $data) {
@@ -382,60 +381,6 @@ class HttpService
         $this->currentHandler->body = $message;
         $this->currentHandler->body = (defined('DEBUG') && DEBUG == 'on') ? $message : '';
         $this->currentHandler->response();
-    }
-
-    /**
-     * Fatal Error的捕获
-     * @codeCoverageIgnore
-     */
-    public function handleFatal()
-    {
-        $error = error_get_last();
-        if (!isset($error['type'])) return;
-        switch ($error['type'])
-        {
-            case E_ERROR :
-            case E_PARSE :
-            case E_DEPRECATED:
-            case E_CORE_ERROR :
-            case E_COMPILE_ERROR :
-                break;
-            default:
-                return;
-        }
-        $message = $error['message'];
-        $file = $error['file'];
-        $line = $error['line'];
-        $log = "$message ($file:$line)\nStack trace:\n";
-        $trace = debug_backtrace();
-        foreach ($trace as $i => $t)
-        {
-            if (!isset($t['file']))
-            {
-                $t['file'] = 'unknown';
-            }
-            if (!isset($t['line']))
-            {
-                $t['line'] = 0;
-            }
-            if (!isset($t['function']))
-            {
-                $t['function'] = 'unknown';
-            }
-            $log .= "#$i {$t['file']}({$t['line']}): ";
-            if (isset($t['object']) && is_object($t['object']))
-            {
-                $log .= get_class($t['object']) . '->';
-            }
-            $log .= "{$t['function']}()\n";
-        }
-        if (isset($_SERVER['REQUEST_URI']))
-        {
-            $log .= '[QUERY] ' . $_SERVER['REQUEST_URI'];
-        }
-        error_log($log);
-        //记录错误日志
-        //$this->response($this->currentFd, $log);
     }
 
 }

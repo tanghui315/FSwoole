@@ -151,9 +151,29 @@ class Handler{
     //请求结束
     function afterAction()
     {
-
+        if (!self::$keepalive or $this->head['Connection'] == 'close')
+        {
+            if(empty($this->request)){
+                self::$serv->close(self::$currentFd);
+            }else{
+                self::$serv->close($this->request->fd);
+            }
+        }
+       // $this->request->unsetGlobal();
+        //清空request缓存区
+       // unset($this->requests[$request->fd]);
+        unset($request);
     }
 
+    /**
+     * 设置Http头信息
+     * @param $key
+     * @param $value
+     */
+    function setHeader($key,$value)
+    {
+        $this->head[$key] = $value;
+    }
 
     //异步任务
     function task($data){
@@ -161,10 +181,110 @@ class Handler{
         self::$serv->task($taskData);
     }
 
+    /**
+     * 添加http header
+     * @param $header
+     */
+    function addHeaders(array $header)
+    {
+        $this->head = array_merge($this->head, $header);
+    }
 
+    function getHeader($fastcgi = false)
+    {
+        $out = '';
+        if ($fastcgi)
+        {
+            $out .= 'Status: '.$this->http_status.' '.self::$HTTP_HEADERS[$this->http_status]."\r\n";
+        }
+        else
+        {
+            //Protocol
+            if (isset($this->head[0]))
+            {
+                $out .= $this->head[0]."\r\n";
+                unset($this->head[0]);
+            }
+            else
+            {
+                $out = "HTTP/1.1 200 OK\r\n";
+            }
+        }
+        //fill header
+        if (!isset($this->head['Server']))
+        {
+            $this->head['Server'] = "felix-2.0";
+        }
+        if (!isset($this->head['Content-Type']))
+        {
+            $this->head['Content-Type'] = 'text/html; charset='.$this->charset;
+        }
+        if (!isset($this->head['Content-Length']))
+        {
+            $this->head['Content-Length'] = strlen($this->body);
+        }
+        //Headers
+        foreach($this->head as $k=>$v)
+        {
+            $out .= $k.': '.$v."\r\n";
+        }
+        //Cookies
+        if (!empty($this->cookie) and is_array($this->cookie))
+        {
+            foreach($this->cookie as $v)
+            {
+                $out .= "Set-Cookie: $v\r\n";
+            }
+        }
+        //End
+        $out .= "\r\n";
+        return $out;
+    }
+
+    function noCache()
+    {
+        $this->head['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0';
+        $this->head['Pragma'] = 'no-cache';
+    }
+
+    /**
+     * 设置COOKIE
+     * @param $name
+     * @param null $value
+     * @param null $expire
+     * @param string $path
+     * @param null $domain
+     * @param null $secure
+     * @param null $httponly
+     */
     function setcookie($name, $value = null, $expire = null, $path = '/', $domain = null, $secure = null, $httponly = null)
     {
-        $this->cookie[] = ['name'=>$name,'value'=>$value,'expire'=>$expire,'path'=>$path,'domain'=>$domain,'secure'=>$secure,'httponly'=>$httponly];
+        if ($value == null)
+        {
+            $value = 'deleted';
+        }
+        $cookie = "$name=$value";
+        if ($expire)
+        {
+            $cookie .= "; expires=" . date("D, d-M-Y H:i:s T", $expire);
+        }
+        if ($path)
+        {
+            $cookie .= "; path=$path";
+        }
+        if ($secure)
+        {
+            $cookie .= "; secure";
+        }
+        if ($domain)
+        {
+            $cookie .= "; domain=$domain";
+        }
+        if ($httponly)
+        {
+            $cookie .= '; httponly';
+        }
+        $this->cookie[] = $cookie;
     }
 
     function setHttpStatus($code)
@@ -173,6 +293,70 @@ class Handler{
         $this->http_status = $code;
     }
 
+    function doStaticRequest($request)
+    {
+        $path = explode('/', trim($request->meta['path'], '/'));
+        //扩展名
+        $request->ext_name = $ext_name = \Felix\Helper::getFileExt($request->meta['path']);
+
+        /* 是否静态目录 */
+        if (isset(self::$static_dir[$path[0]]) or isset(self::$static_dir[$ext_name]))
+        {
+            return $this->processStatic($request);
+        }
+        return false;
+    }
+
+
+    /**
+     * 处理静态请求
+     */
+    function processStatic($request)
+    {
+        $path = self::$document_root . $request->meta['path'];
+        if (is_file($path))
+        {
+            $read_file = true;
+            if (self::$expire)
+            {
+                $expire = intval(isset($this->config['web_server']['expire_time'])?$this->config['web_server']['expire_time']:1800);
+                $fstat = stat($path);
+                //过期控制信息
+                if (isset($request->header['If-Modified-Since']))
+                {
+                    $lastModifiedSince = strtotime($request->header['If-Modified-Since']);
+
+                    if ($lastModifiedSince and $fstat['mtime'] <= $lastModifiedSince)
+                    {
+                        //不需要读文件了
+                        $read_file = false;
+                        $this->setHttpStatus(304);
+                    }
+                }
+                else
+                {
+                    $this->head['Cache-Control'] = "max-age={$expire}";
+                    $this->head['Pragma'] = "max-age={$expire}";
+                    $this->head['Last-Modified'] = date(self::DATE_FORMAT_HTTP, $fstat['mtime']);
+                    $this->head['Expires'] = "max-age={$expire}";
+                }
+            }
+            $ext_name = \Felix\Helper::getFileExt($request->meta['path']);
+            if($read_file)
+            {
+                $this->head['Content-Type'] = $this->mime_types[$ext_name];
+                $this->body = file_get_contents($path);
+            }else{
+                //校验头
+                $this->head['Content-Type'] = $this->mime_types[$ext_name];
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     //静态文件处理 ，用于HttpServ
     function doStaticRequestE($request)
@@ -294,7 +478,7 @@ class Handler{
     }
 
 
-    function response($content="",$isjson=false)
+    function response_d($content="",$isjson=false)
     {
         if(!empty($content)){
             $this->body=$content;
@@ -337,12 +521,16 @@ class Handler{
         }else{
             $this->response->header('Content-Type',$this->head['Content-Type']);
         }
+//        if (!isset($this->head['Content-Length']))
+//        {
+//          //  $this->response->header('Content-Length',strlen($this->body));
+//        }
 
         if (!empty($this->cookie) and is_array($this->cookie))
         {
-            foreach($this->cookie as $v)
+            foreach($this->cookie as $k=>$v)
             {
-                $this->response->cookie($v['name'],$v['value'],$v['expire'],$v['path'],$v['domain'],$v['secure'],$v['httponly']);
+                $this->response->cookie($k,$v);
             }
         }
         if (self::$gzip)
@@ -352,8 +540,66 @@ class Handler{
         }
 
         $this->response->end($this->body);
-        $this->afterAction();
         return;
+
+    }
+
+
+    function response($content="",$isjson=false)
+    {
+        if(!empty($content)){
+            $this->body=$content;
+        }
+
+        if (!isset($this->head['Date']))
+        {
+            $this->head['Date'] = gmdate("D, d M Y H:i:s T");
+        }
+        if($isjson)
+        {
+            $this->head['Content-Type'] = 'application/json;charset='.$this->charset;
+            self::$gzip=false;
+        }else{
+            self::$gzip=true;
+        }
+
+        if (!isset($this->head['Connection']))
+        {
+            //keepalive
+            if (self::$keepalive and (isset($this->request->header['Connection']) and strtolower($this->request->header['Connection']) == 'keep-alive'))
+            {
+                $this->head['KeepAlive'] = 'on';
+                $this->head['Connection'] = 'keep-alive';
+            }
+            else
+            {
+                $this->head['KeepAlive'] = 'off';
+                $this->head['Connection'] = 'close';
+            }
+        }
+
+        //过期命中
+        if (self::$expire and $this->http_status == 304)
+        {
+            $out = $this->getHeader();
+            return self::$serv->send(self::$currentFd, $out);
+        }
+
+        //压缩
+        if (self::$gzip)
+        {
+            $this->head['Content-Encoding'] = 'deflate';
+            $this->body = \gzdeflate($this->body, isset($this->config['web_server']['gzip_level'])?$this->config['web_server']['gzip_level']:1);
+        }
+
+        //echo $this->head['Content-Type'];
+        $out = $this->getHeader().$this->body;
+        $ret = self::$serv->send(self::$currentFd, $out);
+        $this->head['Connection']="close";
+        //if($this->http_status != 404) {
+            $this->afterAction();
+       // }
+        return $ret;
 
     }
 
@@ -366,6 +612,15 @@ class Handler{
             $this->response("<h1>Page Not Found</h1><hr />Felix Web Server ");
         }else{
             $this->response($content);
+        }
+
+    }
+
+    //获取指定模型
+    function getModel($model)
+    {
+        if(empty($model)){
+            return false;
         }
 
     }

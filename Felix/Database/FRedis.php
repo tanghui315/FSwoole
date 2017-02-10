@@ -14,7 +14,8 @@ class FRedis {
     public static $redis;
 
     public static function init($redis_config){
-        self::$redis = new \Redis();
+        //使用协程redis
+        self::$redis = new \Swoole\Coroutine\Redis();
         self::$redis ->connect($redis_config['host'], $redis_config['port']);
     }
 }
