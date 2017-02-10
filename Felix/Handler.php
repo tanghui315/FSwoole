@@ -224,16 +224,16 @@ class Handler{
                     $this->head['Content-Type'] = $this->mime_types[$ext_name];
                 }
                 $this->response();
-                return true;
+                return 1;
             }
             else
             {
                 $this->httpError(404);
-                return false;
+                return -1;
             }
         }
 
-        return false;
+        return -2;
 
     }
 

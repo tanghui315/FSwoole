@@ -70,12 +70,17 @@ class HttpServ{
             $handlerAction="indexAction";
         }else{
             //是否为静态文件
-            if($fhandler->doStaticRequestE($request))
+            $tag=$fhandler->doStaticRequestE($request);
+            if($tag==1)
             {
                 //这里最好是判断请求，如果是移动端就不要压缩
                 $fhandler::$gzip=false;
                 return true;
+            }elseif($tag==-1)
+            {
+                return false;
             }
+
             //动态路由处理
             $path = explode('/', trim($request->server['path_info'], '/'));
             //print_r($path);
