@@ -8,9 +8,14 @@
 
 namespace app\handler;
 use Felix;
+use app\models\VotebaseModel;
 
 class InfoHandler extends Felix\Handler{
 
+    public function  __constuck()
+    {
+        $this->loadModel(['model1','model2']);
+    }
     //get请求
     public function indexAction(){
         //$b=Felix\Database\MysqlDb::queryOne("select * from ");
@@ -24,10 +29,11 @@ class InfoHandler extends Felix\Handler{
 
     public function voteAction(){
 
-        $this->loadModel("votebase");
-
+        //$this->loadModel("votebase");
+//        $d=new VotebaseModel();
+//        $d->db=$this->loadDB("",true);
         //$this->votebase->updateTitle(51,"顶你个肺");
-        $data=$this->votebase->getData();
+//        $data=$d->getData();
 
         return $this->response(json_encode($data),true);
     }

@@ -255,11 +255,21 @@ class Handler{
 
     // 加载模型
 
-    function loadModel($name)
+    function loadModel($name,$rname='')
     {
         if(empty($name)){
             return false;
+
+        }elseif (is_array($name))
+        {
+            foreach ($name as $key => $value)
+            {
+                is_int($key) ? $this->loadModel($value) : $this->loadModel($key, $value);
+            }
+
+            return $this;
         }
+
         $path = '';
 
         // Is the model in a sub-folder? If so, parse out the filename and path.
@@ -280,7 +290,7 @@ class Handler{
         $model = ucfirst($name);
         $filePath =BASEPATH."apps/models/".$path.$model."Model.php";
         if(!file_exists($filePath)){
-            log_message("modelErr",$path.$name." file not find");
+            log_message("ModelErr",$path.$name." file not find");
             return false;
         }
         if(empty($path))
@@ -288,8 +298,14 @@ class Handler{
         else
             $class="app\\models\\".$path."\\". $model."Model";
 
-        $this->$name = new $class();
-        $this->$name->db=$this->db;
+        if(!empty($rname)){
+            $this->$rname = new $class();
+            $this->$rname->db=$this->db;
+        }else{
+            $this->$name = new $class();
+            $this->$name->db=$this->db;
+        }
+
         return true;
     }
 
