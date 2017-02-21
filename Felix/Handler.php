@@ -91,29 +91,6 @@ class Handler{
     function init($server,$config)
     {
         $config=$config['web_server'];
-        self::$serv=$server->serv;
-        self::$currentFd=$server->currentFd;
-        if(isset($config['document_root'])){
-            self::$document_root=$config['document_root'];
-        }
-        if(isset($config['keepalive'])){
-            self::$keepalive=true;
-        }
-        if(isset($config['gzip_open'])){
-            self::$gzip=true;
-        }
-        if(isset($config['expire_open'])){
-            self::$expire=true;
-        }
-
-        self::$static_dir = array_flip(explode(',', $config['static_dir']));
-        self::$static_ext = array_flip(explode(',', $config['static_ext']));
-
-    }
-
-    function initE($server,$config)
-    {
-        $config=$config['web_server'];
         self::$serv=$server;
         if(isset($config['document_root'])){
             self::$document_root=$config['document_root'];

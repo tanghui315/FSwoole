@@ -53,7 +53,7 @@ class HttpServ{
         list($tmphead, $request->body) = explode(self::HTTP_EOF, $request->data, 2);
        // $info=$server->currentRequest;
         $fhandler=new Felix\Handler;
-        $fhandler->initE($this->serv,$this->config);
+        $fhandler->init($this->serv,$this->config);
         $fhandler->request=$request;
         $fhandler->response=$response;
         $url=strtolower($request->server['path_info']);
@@ -191,7 +191,7 @@ class HttpServ{
         if (empty($this->currentHandler))
         {
             $this->currentHandler = new Felix\Handler();
-            $this->currentHandler->init($this,$this->config['web_server']);
+            $this->currentHandler->init($this,$this->config);
         }
         $this->currentHandler->setHttpStatus(500);
         $this->currentHandler->body = $message;
