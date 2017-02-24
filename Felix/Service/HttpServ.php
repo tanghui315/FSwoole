@@ -10,30 +10,13 @@
 namespace Felix\Service;
 use Felix;
 
-class HttpServ{
+class HttpServ extends Felix\Service{
 
     const HTTP_EOF = "\r\n\r\n";
     public $serv;
-    public $config;
-    public $log;
     public $smarty;
-    public $app_path;
     public $currentHandler;
 
-    function __construct($config = array())
-    {
-        $this->config = $config;
-    }
-
-
-    /**
-     * 设置Logger
-     * @param $log
-     */
-    function setLogger($log)
-    {
-        $this->log = $log;
-    }
 
     public function setGlobal($request)
     {
@@ -147,47 +130,14 @@ class HttpServ{
 
 
     /**
-     * 捕获register_shutdown_function错误
-     */
-    function onErrorShutDown()
-    {
-        $error = error_get_last();
-        if (!isset($error['type'])) return;
-        switch ($error['type'])
-        {
-            case E_ERROR :
-            case E_PARSE :
-            case E_USER_ERROR:
-            case E_CORE_ERROR :
-            case E_COMPILE_ERROR :
-                break;
-            default:
-                return;
-        }
-        $this->errorResponse($error);
-    }
-
-    /**
-     * 捕获set_error_handle错误
-     */
-    function onErrorHandle($errno, $errstr, $errfile, $errline)
-    {
-        $error = array(
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline,
-        );
-        $this->errorResponse($error);
-    }
-
-    /**
      * 错误显示
      * @param $error
      */
-    private function errorResponse($error)
+    function errorResponse($error)
     {
         $errorMsg = "{$error['message']} ({$error['file']}:{$error['line']})";
         $message = Felix\Error::info("FSwooleFramework"." Application Error", $errorMsg);
+        $this->log->put($errorMsg,4);
         if (empty($this->currentHandler))
         {
             $this->currentHandler = new Felix\Handler();

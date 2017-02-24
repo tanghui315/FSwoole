@@ -19,8 +19,8 @@ class Model{
             if(empty($handler->db))
             {
                 $handler->loadDB();
-                $this->db=$handler->db;
             }
+            $this->db=$handler->db;
         }
         //log_message('info', 'Model Class Initialized');
     }

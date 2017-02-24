@@ -9,7 +9,7 @@ require_once __DIR__ . '/Loader.php';
 class Felix{
 
     static public $felix;
-    static public $app_path;
+    public $app_path;
     protected $config=array();
     protected $http_server;
     public  $redis;
@@ -35,12 +35,12 @@ class Felix{
         if (!defined('DEBUG')) define('DEBUG', 'on');
         if (defined('WEBPATH'))
         {
-            self::$app_path = WEBPATH . '/apps';
+            $this->app_path = WEBPATH . '/apps';
         }else{
-            self::$app_path = __DIR__ . '/../apps';
+            $this->app_path = __DIR__ . '/../apps';
         }
-        define('APPSPATH', self::$app_path);
-        Felix\Loader::addNameSpace('app', self::$app_path . '/');
+        define('APPSPATH', $this->app_path);
+        Felix\Loader::addNameSpace('app', $this->app_path . '/');
 
     }
 
@@ -49,7 +49,7 @@ class Felix{
     {
             $this->config=$config;
 
-            if($config['redis']['enabled']){
+            if($this->config['redis']['enabled']){
                 Felix\Database\FRedis::init($config['redis']);
             }
             //初始化模版引擎
@@ -64,9 +64,25 @@ class Felix{
             define('FELIX_SERVER', true);
             $this->http_server=new Felix\Service\HttpServ($this->config);
             $this->http_server->smarty=$this->smarty;
-            $this->http_server->app_path=self::$app_path;
+            $this->http_server->app_path=$this->app_path;
             $this->http_server->setLogger(new \Felix\Log\FileLog($config["log"]));
             $this->http_server->run($host,$port);
+    }
+
+    //运行命令行处理
+    function runCommand($parameter,$config = array())
+    {
+        $this->config=$config;
+
+        if($this->config['redis']['enabled']){
+            Felix\Database\FRedis::init($config['redis']);
+        }
+
+        $cmd=new Felix\Service\CmdServ($this->config);
+        $cmd->app_path=$this->app_path;
+        $cmd->setLogger(new \Felix\Log\FileLog($config["log"]));
+        $cmd->run($parameter);
+
     }
 
 }

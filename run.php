@@ -27,5 +27,8 @@ Felix\Loader::addNameSpace('Felix', __DIR__.'/Felix');
 spl_autoload_register('\\Felix\\Loader::autoload');
 
 $felix=\Felix::getInstance();
-#$felix->redis=$redis;
-$felix->runHttpServer($config);
+if(isset($argv[1])){
+    $felix->runCommand($argv,$config);
+}else{
+    $felix->runHttpServer($config);
+}
