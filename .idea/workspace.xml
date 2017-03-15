@@ -2,23 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2df5539e-4da1-4856-b93d-15282792592b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/apps/websocket_handler/TestHandler.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Felix/Service/WebSocketServ.php" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170119.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170122.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170123.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170124.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170203.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170204.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170206.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170207.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170209.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170210.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170220.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/20170224.log" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Felix/Handler.php" afterPath="$PROJECT_DIR$/Felix/Handler.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Felix/Service/HttpServ.php" afterPath="$PROJECT_DIR$/Felix/Service/HttpServ.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="FSwoole.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,8 +31,8 @@
       <file leaf-file-name="Felix.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Felix/Felix.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="699" max-vertical-offset="1395">
-              <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+            <state vertical-scroll-proportion="-33.166668" vertical-offset="209" max-vertical-offset="1395">
+              <caret line="67" column="72" selection-start-line="67" selection-start-column="65" selection-end-line="67" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -68,8 +53,8 @@
       <file leaf-file-name="Handler.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Felix/Handler.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.37047756" vertical-offset="5219" max-vertical-offset="5910">
-              <caret line="370" column="0" selection-start-line="370" selection-start-column="0" selection-end-line="370" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.72289157" vertical-offset="1245" max-vertical-offset="5955">
+              <caret line="120" column="7" selection-start-line="120" selection-start-column="7" selection-end-line="120" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -90,7 +75,7 @@
       <file leaf-file-name="InfoHandler.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/handler/InfoHandler.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="570">
+            <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="570">
               <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
               <folding>
                 <element signature="e#114#124#0#PHP" expanded="true" />
@@ -99,21 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="run.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/run.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="465" max-vertical-offset="600">
-              <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="CmdServ.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Felix/Service/CmdServ.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="369" max-vertical-offset="1065">
-              <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+            <state vertical-scroll-proportion="-16.875" vertical-offset="165" max-vertical-offset="1065">
+              <caret line="38" column="28" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="28" />
               <folding>
                 <element signature="e#6#90#0#PHP" expanded="true" />
               </folding>
@@ -136,8 +111,8 @@
       <file leaf-file-name="HttpServ.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Felix/Service/HttpServ.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.291666" vertical-offset="2054" max-vertical-offset="2745">
-              <caret line="168" column="5" selection-start-line="168" selection-start-column="5" selection-end-line="168" selection-end-column="5" />
+            <state vertical-scroll-proportion="3.7083333" vertical-offset="1769" max-vertical-offset="2685">
+              <caret line="117" column="12" selection-start-line="117" selection-start-column="12" selection-end-line="117" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -146,8 +121,8 @@
       <file leaf-file-name="Service.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Felix/Service.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="1155">
-              <caret line="64" column="26" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="26" />
+            <state vertical-scroll-proportion="-15.625" vertical-offset="0" max-vertical-offset="1155">
+              <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
               <folding>
                 <element signature="e#6#90#0#PHP" expanded="true" />
               </folding>
@@ -580,13 +555,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Felix/bak/Handler.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.25174826" vertical-offset="8346" max-vertical-offset="9720">
-          <caret line="547" column="13" selection-start-line="547" selection-start-column="13" selection-end-line="547" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Felix/Database/FRedis.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="180" max-vertical-offset="315">
@@ -694,50 +662,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Felix/bak/Handler.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.25759768" vertical-offset="8012" max-vertical-offset="9720">
+          <caret line="551" column="9" selection-start-line="551" selection-start-column="9" selection-end-line="551" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Felix/Service.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="1155">
-          <caret line="64" column="26" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="26" />
+        <state vertical-scroll-proportion="-15.625" vertical-offset="0" max-vertical-offset="1155">
+          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
           <folding>
             <element signature="e#6#90#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Felix/Service/CmdServ.php">
+    <entry file="file://$PROJECT_DIR$/Felix/Service/HttpServ.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="369" max-vertical-offset="1065">
-          <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
-          <folding>
-            <element signature="e#6#90#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Felix/Felix.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="699" max-vertical-offset="1395">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+        <state vertical-scroll-proportion="3.7083333" vertical-offset="1769" max-vertical-offset="2685">
+          <caret line="117" column="12" selection-start-line="117" selection-start-column="12" selection-end-line="117" selection-end-column="43" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Felix/Service/WebSocketServ.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-27.541666" vertical-offset="209" max-vertical-offset="1215">
+          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+          <folding>
+            <element signature="e#6#88#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/apps/handler/InfoHandler.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="570">
+        <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="570">
           <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
           <folding>
             <element signature="e#114#124#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/apps/websocket_handler/TestHandler.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.0" vertical-offset="0" max-vertical-offset="345">
-          <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
-          <folding>
-            <element signature="e#6#88#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -752,28 +718,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Felix/Service/WebSocketServ.php">
+    <entry file="file://$PROJECT_DIR$/apps/websocket_handler/TestHandler.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-27.541666" vertical-offset="209" max-vertical-offset="1215">
-          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+        <state vertical-scroll-proportion="-10.0" vertical-offset="0" max-vertical-offset="345">
+          <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
           <folding>
             <element signature="e#6#88#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Felix/Service/HttpServ.php">
+    <entry file="file://$PROJECT_DIR$/Felix/Service/CmdServ.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.291666" vertical-offset="2054" max-vertical-offset="2745">
-          <caret line="168" column="5" selection-start-line="168" selection-start-column="5" selection-end-line="168" selection-end-column="5" />
+        <state vertical-scroll-proportion="-16.875" vertical-offset="165" max-vertical-offset="1065">
+          <caret line="38" column="28" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="28" />
+          <folding>
+            <element signature="e#6#90#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Felix/Felix.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-33.166668" vertical-offset="209" max-vertical-offset="1395">
+          <caret line="67" column="72" selection-start-line="67" selection-start-column="65" selection-end-line="67" selection-end-column="72" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Felix/Handler.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37047756" vertical-offset="5219" max-vertical-offset="5910">
-          <caret line="370" column="0" selection-start-line="370" selection-start-column="0" selection-end-line="370" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.72289157" vertical-offset="1245" max-vertical-offset="5955">
+          <caret line="120" column="7" selection-start-line="120" selection-start-column="7" selection-end-line="120" selection-end-column="7" />
           <folding />
         </state>
       </provider>

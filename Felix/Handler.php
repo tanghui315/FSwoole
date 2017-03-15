@@ -88,33 +88,36 @@ class Handler{
         'svg' => 'image/svg+xml',
     );
 
-    function __construct($request,$config)
+    function __construct($serv=null)
     {
-        $this->request=$request;
-        $this->config=$config;
+        if($serv!=null){
+            $this->request=$serv->request;
+            $this->response=$serv->response;
+            $this->config=$serv->config;
+            $this->log = $serv->log;
+            $this->smarty=$serv->smarty;
+            $config=$this->config['web_server'];
+            self::$serv=$serv->serv;
+            if(isset($config['document_root'])){
+                self::$document_root=$config['document_root'];
+            }
+            if(isset($config['keepalive'])){
+                self::$keepalive=true;
+            }
+            if(isset($config['gzip_open'])){
+                self::$gzip=true;
+            }
+            if(isset($config['expire_open'])){
+                self::$expire=true;
+            }
+
+            self::$static_dir = array_flip(explode(',', $config['static_dir']));
+            self::$static_ext = array_flip(explode(',', $config['static_ext']));
+        }
+
     }
 
-    function init($server)
-    {
-        $config=$this->config['web_server'];
-        self::$serv=$server;
-        if(isset($config['document_root'])){
-            self::$document_root=$config['document_root'];
-        }
-        if(isset($config['keepalive'])){
-            self::$keepalive=true;
-        }
-        if(isset($config['gzip_open'])){
-            self::$gzip=true;
-        }
-        if(isset($config['expire_open'])){
-            self::$expire=true;
-        }
 
-        self::$static_dir = array_flip(explode(',', $config['static_dir']));
-        self::$static_ext = array_flip(explode(',', $config['static_ext']));
-
-    }
     /**
      * 设置Logger
      * @param $log
@@ -297,7 +300,7 @@ class Handler{
             $this->body=$content;
         }
         if(!isset($this->response)){
-            $this->log->put("not defined response");
+            log_message("ERR","not defined response");
             return false;
         }
         if (!isset($this->head['Date']))
