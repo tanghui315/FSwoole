@@ -16,7 +16,7 @@ class HttpServ extends Felix\Service{
     public $serv;
     public $smarty;
     public $currentHandler;
-
+    public $request;
 
     public function setGlobal($request)
     {
@@ -32,11 +32,12 @@ class HttpServ extends Felix\Service{
     {
 
         $this->setGlobal($request);
+        $this->request=$request;
         //获取body
         list($tmphead, $request->body) = explode(self::HTTP_EOF, $request->data, 2);
        // $info=$server->currentRequest;
-        $fhandler=new Felix\Handler;
-        $fhandler->init($this->serv,$this->config);
+        $fhandler=new Felix\Handler($request,$this->config);
+        $fhandler->init($this->serv);
         $fhandler->request=$request;
         $fhandler->response=$response;
         $url=strtolower($request->server['path_info']);
@@ -114,12 +115,11 @@ class HttpServ extends Felix\Service{
             }
         }
         if(!empty($handlerAction)){
-            $handler=new $fclass;
-            $handler->request=$request;
+            $handler=new $fclass($request,$this->config);
             $handler->response=$response;
             $handler->setLogger($this->log);
             $handler->smarty=$this->smarty;
-            $handler->beforeAction($request,$this->config);
+            $handler->beforeAction();
             $handler->$handlerAction();
             return true;
         }else{
@@ -140,8 +140,8 @@ class HttpServ extends Felix\Service{
         $this->log->put($errorMsg,4);
         if (empty($this->currentHandler))
         {
-            $this->currentHandler = new Felix\Handler();
-            $this->currentHandler->init($this,$this->config);
+            $this->currentHandler = new Felix\Handler($this->request,$this->config);
+            $this->currentHandler->init($this);
         }
         $this->currentHandler->setHttpStatus(500);
         $this->currentHandler->body = $message;

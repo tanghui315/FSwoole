@@ -88,9 +88,15 @@ class Handler{
         'svg' => 'image/svg+xml',
     );
 
-    function init($server,$config)
+    function __construct($request,$config)
     {
-        $config=$config['web_server'];
+        $this->request=$request;
+        $this->config=$config;
+    }
+
+    function init($server)
+    {
+        $config=$this->config['web_server'];
         self::$serv=$server;
         if(isset($config['document_root'])){
             self::$document_root=$config['document_root'];
@@ -119,10 +125,8 @@ class Handler{
     }
 
     //请求开始
-    function beforeAction($request,$config)
+    function beforeAction()
     {
-        $this->request = $request;
-        $this->config = $config;
     }
 
     //请求结束
@@ -291,6 +295,10 @@ class Handler{
     {
         if(!empty($content)){
             $this->body=$content;
+        }
+        if(!isset($this->response)){
+            $this->log->put("not defined response");
+            return false;
         }
         if (!isset($this->head['Date']))
         {
