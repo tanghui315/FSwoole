@@ -294,8 +294,15 @@ class Handler{
     }
 
 
-    function response($content="",$isjson=false)
+    function response($content="",$iserr=false)
     {
+        if(is_array($content))
+        {
+            $content=json_encode($content);
+            $isjson=true;
+        }else{
+            $isjson=false;
+        }
         if(!empty($content)){
             $this->body=$content;
         }
@@ -357,6 +364,10 @@ class Handler{
 
         $this->response->end($this->body);
         $this->afterAction();
+        if($iserr)
+        {
+            throw new \Exception($content);
+        }
         return;
 
     }

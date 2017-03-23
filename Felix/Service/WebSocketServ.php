@@ -47,14 +47,14 @@ class WebSocketServ extends Felix\Service{
     {
 
         if(isset($data['handler'])){
-            $data['wsHandler']->onTask($serv,$task_id,$from_id,$data);
+            $data['handler']->onTask($serv,$task_id,$from_id,$data);
         }
         return $data;
     }
 
     function onFinish($serv,$task_id, $data) {
         if(isset($data['handler'])){
-            $data['wsHandler']->onFinish($serv,$task_id, $data);
+            $data['handler']->onFinish($serv,$task_id, $data);
         }
     }
 
