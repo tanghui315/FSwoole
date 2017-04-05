@@ -64,7 +64,11 @@ return [
             'save_queries' => true
         )
     ],
-
+    "listen"=>[
+        'host'=>"0.0.0.0",
+        'port'=>9889
+    ],
+    "smarty"=>true,
     "redis"=>[
         'enabled'=>false,
         'host'=>'127.0.0.1',

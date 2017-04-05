@@ -386,9 +386,15 @@ class Handler{
     }
 
     //模版呈现
-    function render($src,$data)
+    function render($src,$data=[],$clearCache=false)
     {
-        $this->smarty->assign($data);
+        if(!empty($data)){
+            $this->smarty->assign($data);
+        }
+        if($clearCache){
+            $this->smarty->clearCache($src);
+        }
+
         $output=$this->smarty->fetch($src);
         $this->response($output);
     }

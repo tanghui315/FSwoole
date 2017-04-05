@@ -19,6 +19,8 @@ require_once __DIR__ . '/Felix/Loader.php';
 require_once __DIR__.'/libs/smarty/libs/Smarty.class.php';
 
 $config = require( __DIR__ . '/config/config.php');
+$router = require(__DIR__.'/config/router.php');
+$config['router']=$router;
 
 /**
  * 注册顶层命名空间到自动载入器
@@ -26,9 +28,9 @@ $config = require( __DIR__ . '/config/config.php');
 Felix\Loader::addNameSpace('Felix', __DIR__.'/Felix');
 spl_autoload_register('\\Felix\\Loader::autoload');
 
-$felix=\Felix::getInstance();
+$felix=new \Felix($config);
 if(isset($argv[1])){
-    $felix->runCommand($argv,$config);
+    $felix->runCommand($argv);
 }else{
-    $felix->runHttpServer($config);
+    $felix->runHttpServer();
 }
