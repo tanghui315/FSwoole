@@ -67,6 +67,17 @@ class HttpServ extends Felix\Service{
             //动态路由处理
             $path = explode('/', trim($request->server['path_info'], '/'));
             //print_r($path);
+            //判断是不是经过路由映射的连接
+            if(count($path)==1){
+                if(isset($this->config['router'][$path[0]])){
+                    $tstr=$this->config['router'][$path[0]];
+                    $path=explode('/', trim($tstr, '/'));
+                }else{
+                    $fhandler->httpError(404);
+                    return false;
+                }
+            }
+            //print_r($path);
             if(count($path)<3){ //证明不是模块
                 $cword=ucfirst($path[0]);
                 $fclass='app\handler\\'."{$cword}Handler";

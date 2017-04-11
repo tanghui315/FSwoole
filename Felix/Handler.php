@@ -86,6 +86,7 @@ class Handler{
         'gzip' => 'papplication/gzip',
         'woff' => 'application/x-woff',
         'svg' => 'image/svg+xml',
+        'map'=>'text/plain',
     );
 
     function __construct($serv=null)
@@ -201,11 +202,15 @@ class Handler{
                 $ext_name = \Felix\Helper::getFileExt($request->server['path_info']);
                 if($read_file)
                 {
-                    $this->head['Content-Type'] = $this->mime_types[$ext_name];
+                    if(isset($this->mime_types[$ext_name])){
+                        $this->head['Content-Type'] = $this->mime_types[$ext_name];
+                    }
                     $this->body = file_get_contents($path);
                 }else{
                     //校验头
-                    $this->head['Content-Type'] = $this->mime_types[$ext_name];
+                    if(isset($this->mime_types[$ext_name])){
+                        $this->head['Content-Type'] = $this->mime_types[$ext_name];
+                    }
                 }
                 $this->response();
                 return 1;

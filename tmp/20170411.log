@@ -1,0 +1,1 @@
+[2017-04-11 15:34:08]	ERROR	swoole_http_server::start(): start server failed. Error: swFactoryProcess_start: swFactoryProcess_manager_start failed. (/Users/tanghui/Documents/workspace/FSwoole/Felix/Service/HttpServ.php:186)
