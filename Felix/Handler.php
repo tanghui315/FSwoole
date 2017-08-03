@@ -35,6 +35,7 @@ class Handler{
     public $http_status = 200;
     public $request;
     public $response;
+    public $server;
     static $HTTP_HEADERS = array(
         100 => "100 Continue",
         101 => "101 Switching Protocols",
@@ -92,11 +93,12 @@ class Handler{
     function __construct($serv=null)
     {
         if($serv!=null){
+            $this->server=$serv;
             $this->request=$serv->request;
             $this->response=$serv->response;
             $this->config=$serv->config;
             $this->log = $serv->log;
-            $this->smarty=$serv->smarty;
+            $this->smarty=isset($serv->smarty)?$serv->smarty:null;
             $config=$this->config['web_server'];
             self::$serv=$serv->serv;
             if(isset($config['document_root'])){
@@ -391,14 +393,24 @@ class Handler{
     }
 
     //模版呈现
-    function render($src,$data=[],$clearCache=false)
+    function render($src,$data=[])
     {
+        if(!isset($this->smarty))
+        {
+            $this->smarty = new \Smarty;
+            $this->smarty->debugging = true;
+            $this->smarty->caching = true;
+            $this->smarty->cache_lifetime = 120;
+            $this->smarty->template_dir = WEBPATH.'/apps/templates/';
+            $this->smarty->compile_dir = WEBPATH.'/apps/templates/templates_c/';
+            $this->smarty->cache_dir = WEBPATH.'/apps/templates//cache/';
+        }
         if(!empty($data)){
             $this->smarty->assign($data);
         }
-        if($clearCache){
-            $this->smarty->clearCache($src);
-        }
+
+        $this->smarty->clearCache($src);
+
 
         $output=$this->smarty->fetch($src);
         $this->response($output);

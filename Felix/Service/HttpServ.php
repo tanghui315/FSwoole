@@ -126,7 +126,6 @@ class HttpServ extends Felix\Service{
         }
         if(!empty($handlerAction)){
             $handler=new $fclass($this);
-            $handler->smarty=$this->smarty;
             $handler->beforeAction();
             $handler->$handlerAction();
             return true;
