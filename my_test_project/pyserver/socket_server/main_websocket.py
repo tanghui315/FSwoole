@@ -1,0 +1,1 @@
+from aiohttp import webimport syssys.path.append('../../')from common import helperfrom handler.hula_websocket import wshandlerconfigRoom= helper.getServer('server')app = web.Application()app.router.add_get('/ws',wshandler)app['sockets'] = []if __name__ == '__main__':    web.run_app(app,host=str(configRoom['host']),port=int(configRoom['port']))

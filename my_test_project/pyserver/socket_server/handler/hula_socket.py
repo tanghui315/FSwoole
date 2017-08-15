@@ -1,0 +1,1 @@
+import socketioclass HulaSocket(socketio.AsyncNamespace):    def on_connect(self, sid, environ):        print('Client disconnected')    def on_disconnect(self, sid):        print('Client disconnected')
