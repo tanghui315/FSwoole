@@ -5,9 +5,11 @@
  * Date: 2017/8/3
  * Time: 下午12:02
  */
+namespace Felix;
+
 class Task
 {
-    public $container;
+    public $handler;
 
     protected $taskId;
 
@@ -24,22 +26,22 @@ class Task
      * @param obj $container
      * @param obj Generator $coroutine
      */
-    public function __construct($taskId, $container, \Generator $coroutine)
+    public function __construct($taskId, $handler, \Generator $coroutine)
     {
         $this->taskId = $taskId;
-        $this->container = $container;
+        $this->handler = $handler;
         $this->coroutine = $coroutine;
         $this->coStack = new \SplStack();
     }
 
-    public function setContainer($container)
+    public function setHandler($handler)
     {
-        $this->container = $container;
+        $this->handler = $handler;
     }
 
-    public function getContainer()
+    public function getHandler()
     {
-        return $this->container;
+        return $this->handler;
     }
 
     /**
@@ -89,18 +91,18 @@ class Task
                     continue;
                 }
 
-                //如果是系统调用
-//                if ($value instanceof SysCall || is_subclass_of($value, SysCall::class)) {
-//                    call_user_func($value, $this);
-//                    return;
-//                }
-//
-//                //如果是异步IO
-//                if ($value instanceof \Group\Async\Client\Base || is_subclass_of($value, \Group\Async\Client\Base::class)) {
-//                    $this->coStack->push($this->coroutine);
-//                    $value->call(array($this, 'callback'));
-//                    return;
-//                }
+                //如果是系统全局调用
+                if ($value instanceof SysCall || is_subclass_of($value, SysCall::class)) {
+                    call_user_func($value, $this);
+                    return;
+                }
+
+                //如果是异步IO
+                if ($value instanceof \Felix\Async\Client\Base || is_subclass_of($value, \Felix\Async\Client\Base::class)) {
+                    $this->coStack->push($this->coroutine);
+                    $value->call(array($this, 'callback'));
+                    return;
+                }
 
                 if ($this->coStack->isEmpty()) {
                     return;

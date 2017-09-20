@@ -10,7 +10,7 @@ namespace app\handler;
 use Felix;
 use app\models\VotebaseModel;
 
-class InfoHandler extends Felix\Handler{
+class InfoHandler extends Felix\Handler\HttpHandler{
 
     //get请求
     public function indexAction(){

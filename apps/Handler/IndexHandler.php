@@ -8,7 +8,7 @@
 namespace app\handler;
 use Felix;
 
-class IndexHandler extends Felix\Handler{
+class IndexHandler extends Felix\Handler\HttpHandler{
 
     //get请求
     public function indexAction(){

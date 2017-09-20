@@ -13,6 +13,7 @@ class Service{
     public $config;
     public $log;
     public $app_path;
+    public $maxTaskId;
 
     function __construct($config = array())
     {

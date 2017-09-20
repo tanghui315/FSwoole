@@ -8,6 +8,7 @@
 define('DEBUG', 'on');
 define('WEBPATH', __DIR__);
 define('BASEPATH',__DIR__."/");
+define ('PHP_INT_MAX', 9223372036854775807);
 
 function log_message($level, $message)
 {

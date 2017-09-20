@@ -9,7 +9,7 @@
 namespace app\handler;
 use Felix;
 
-class TaskTestHandler extends Felix\Handler{
+class TaskTestHandler extends Felix\Handler\HttpHandler{
 
     public function indexAction(){
         //print_r($this->request);

@@ -38,7 +38,7 @@ class HttpServ extends Felix\Service{
         //获取body
         list($tmphead, $request->body) = explode(self::HTTP_EOF, $request->data, 2);
        // $info=$server->currentRequest;
-        $fhandler=new Felix\Handler($this);
+        $fhandler=new Felix\Handler\HttpHandler($this);
         $url=strtolower($request->server['path_info']);
         $handlerAction="";
         $fclass="";
@@ -53,7 +53,7 @@ class HttpServ extends Felix\Service{
             $handlerAction="indexAction";
         }else{
             //是否为静态文件
-            $tag=$fhandler->doStaticRequestE($request);
+            $tag=$fhandler->doStaticRequest($request);
             if($tag==1)
             {
                 //这里最好是判断请求，如果是移动端就不要压缩
@@ -177,6 +177,7 @@ class HttpServ extends Felix\Service{
         set_error_handler(array($this, 'onErrorHandle'), E_USER_ERROR);
         register_shutdown_function(array($this, 'onErrorShutDown'));
         $this->serv = new \Swoole\Http\Server($host, $port);
+
         $this->serv->on("Request",[$this,"onRequest"]);
         if(isset($this->config['swoole_server']['task_worker_num'])) {
             $this->serv->on('Task', array($this, 'onTask'));
