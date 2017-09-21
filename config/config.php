@@ -61,7 +61,10 @@ return [
             'compress' => false,
             'stricton' => false,
             'failover' => array(),
-            'save_queries' => true
+            'port'  =>3306,
+            'save_queries' => true,
+            'maxPool'=>50,  //连接池大小
+            'timeout'=>5, //连接超时
         )
     ],
     "listen"=>[

@@ -2,11 +2,9 @@
 
 namespace Felix\Async\Pool;
 
-use swoole_mysql;
 use Felix\Async\Pool\Pool;
 use Felix\Async\Pool\Result;
 use splQueue;
-use Config;
 
 class MysqlPool extends Pool
 {
@@ -29,12 +27,13 @@ class MysqlPool extends Pool
 
     protected $timeout = 5;
 
-    public function __construct()
+    public function __construct($config)
     {
         $this->poolQueue = new splQueue();
         $this->taskQueue = new splQueue();
-        $this->maxPool = Config::get('database::maxPool');
-        $this->timeout = Config::get('database::timeout');
+        $this->config=$config;
+        $this->maxPool = $config['database']['default']['maxPool'];
+        $this->timeout = $config['database']['default']['timeout'];
 
         $this->createResources();
     }
@@ -42,20 +41,19 @@ class MysqlPool extends Pool
     //初始化连接数
     public function createResources()
     {
-        $config = Config::get('database::pdo');
         $this->config = [
-            'host' => $config['default']['host'],
-            'port' => $config['default']['port'],
-            'user' => $config['default']['user'],
-            'password' => $config['default']['password'],
-            'database' => $config['default']['dbname'],
-            'charset' => $config['default']['charset'],
+            'host' => $this->config['database']['default']['hostname'],
+            'port' => $this->config['database']['default']['port'],
+            'user' => $this->config['database']['default']['username'],
+            'password' => $this->config['database']['default']['password'],
+            'database' => $this->config['database']['default']['database'],
+            'charset' => $this->config['database']['default']['char_set'],
             'timeout' => $this->timeout,
         ];
 
         for ($i = $this->ableCount; $i < $this->maxPool; $i++) { 
-            $mysql = new swoole_mysql;
-            $mysql->connect($this->config, function(swoole_mysql $mysql, $res) {
+            $mysql = new \Swoole\MySQL;
+            $mysql->connect($this->config, function(\Swoole\MySQL $mysql, $res) {
                 if ($res) {
                     $this->put($mysql);
                 } else {
@@ -90,7 +88,7 @@ class MysqlPool extends Pool
         $task = $this->taskQueue->dequeue();
         $methd = $task['methd'];
         $callback = $task['callback'];
-        $resource->$methd($task['parameters'], function(swoole_mysql $mysql, $res) use ($callback) {
+        $resource->$methd($task['parameters'], function(\Swoole\MySQL $mysql, $res) use ($callback) {
             if ($res === false) {
                 call_user_func_array($callback, array('response' => false, 'error' => $mysql->error));
                 $this->release($mysql);

@@ -5,6 +5,8 @@ namespace Felix\Async;
 use Config;
 use \Felix\Async\Pool\MysqlProxy;
 use \Felix\Async\Client\Mysql;
+use \Felix\SysCall;
+use \Felix\Task;
 
 class AsyncMysql
 {   
@@ -17,16 +19,23 @@ class AsyncMysql
         self::$timeout = $timeout;
     }
 
+   public static function getHandler() {
+        return new SysCall(function(Task $task){
+            $task->send($task->getHandler());
+            $task->run();
+        });
+    }
+
     public static function query($sql, $userPool = true)
-    {   
+    {
+        $handler = (yield self::getHandler());
         if ($userPool && self::$userPool) {
-            $pool = app('mysqlPool');
+            $pool =$handler->loadMysqlPool();
             $mysql = new MysqlProxy($pool);
         } else {
-            $container = (yield getContainer());
             $timeout = self::$timeout;
-            $mysql = $container->singleton('mysql', function() use ($timeout) {
-                $mysql = new Mysql();
+            $mysql = $handler->singleton('mysql', function() use ($timeout,$handler) {
+                $mysql = new Mysql($handler->config);
                 $mysql->setTimeout($timeout);
                 return $mysql;
             });

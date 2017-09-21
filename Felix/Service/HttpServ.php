@@ -9,7 +9,7 @@
 
 namespace Felix\Service;
 use Felix;
-
+use Felix\Task;
 class HttpServ extends Felix\Service{
 
     const HTTP_EOF = "\r\n\r\n";
@@ -125,16 +125,33 @@ class HttpServ extends Felix\Service{
             }
         }
         if(!empty($handlerAction)){
-            $handler=new $fclass($this);
-            $handler->beforeAction();
-            $handler->$handlerAction();
-            return true;
+            $this->handler=new $fclass($this);
+            if ($this->maxTaskId >= PHP_INT_MAX) {
+                $this->maxTaskId = 0;
+            }
+            $taskId = ++$this->maxTaskId;
+            $task =new Task($taskId,$this->handler,$this->terminate($handlerAction));
+            $task->run();
+            unset($task);
         }else{
             $fhandler->httpError(404);
-            return false;
         }
+        unset($fhandler);
+        unset($class_reflect);
+        unset($this->request);
+        unset($this->response);
+        return true;
     }
+    /*
+     * 异步处理
+     */
+    public function terminate($handlerAction)
+    {
+        yield $this->handler->beforeAction();
+        yield $this->handler->$handlerAction();
 
+        unset($this->handler);
+    }
 
     /**
      * 错误显示
@@ -177,7 +194,9 @@ class HttpServ extends Felix\Service{
         set_error_handler(array($this, 'onErrorHandle'), E_USER_ERROR);
         register_shutdown_function(array($this, 'onErrorShutDown'));
         $this->serv = new \Swoole\Http\Server($host, $port);
-
+        $this->serv->on('WorkerStart', [$this, 'onWorkerStart']);
+        $this->serv->on('WorkerStop', [$this, 'onWorkerStop']);
+        $this->serv->on('WorkerExit', [$this, 'onWorkerExit']);
         $this->serv->on("Request",[$this,"onRequest"]);
         if(isset($this->config['swoole_server']['task_worker_num'])) {
             $this->serv->on('Task', array($this, 'onTask'));

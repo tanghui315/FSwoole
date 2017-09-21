@@ -14,6 +14,7 @@ class Service{
     public $log;
     public $app_path;
     public $maxTaskId;
+    public $handler;
 
     function __construct($config = array())
     {
@@ -69,5 +70,26 @@ class Service{
         $this->log->put($errorMsg,4);
         log_message("Error",$errorMsg);
     }
+    function terminate($handlerAction)
+    {
+
+    }
+
+    function onWorkerStart($serv, $workerId)
+    {
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+        $this->maxTaskId=0;
+
+    }
+
+    public function onWorkerStop($serv, $workerId) {}
+
+    public function onWorkerExit($serv, $workerId)
+    {
+        $this->handler->releasePool();
+    }
+
 
 }

@@ -2,7 +2,6 @@
 
 namespace Felix\Async;
 
-use Config;
 use Felix\Async\Client\File;
 
 class AsyncFile

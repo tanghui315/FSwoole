@@ -27,7 +27,7 @@ abstract class Pool
 
     protected $calltime;
 
-    public function __construct()
+    public function __construct($config)
     {
         $this->poolQueue = new splQueue();
         $this->taskQueue = new splQueue();

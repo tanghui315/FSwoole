@@ -7,6 +7,7 @@
  */
 
 namespace Felix;
+use \Felix\Async\Pool\MysqlPool;
 
 class Handler{
 
@@ -59,6 +60,19 @@ class Handler{
             }
         }
     }
+    /*
+     * 释放链接池
+     */
+    public function releasePool()
+    {
+        if(!empty($this->instances)){
+            foreach($this->instances as $key=>$instance){
+                if(in_array($key,['redisPool', 'mysqlPool'])){
+                    $instance->close();
+                }
+            }
+        }
+    }
 
     /**
      * 设置Logger
@@ -76,7 +90,7 @@ class Handler{
     }
 
 
-    //加载数据库
+    //加载同步类型数据库
     function loadDB($active_group="",$return = FALSE){
 
         $dataBaseConfig=$this->config['database'];
@@ -146,7 +160,14 @@ class Handler{
 
         return true;
     }
-
+    //加载mysql连接池
+    function loadMysqlPool()
+    {
+      return  $this->singleton('mysqlPool',function(){
+            $mysqlPool = new MysqlPool($this->config);
+            return $mysqlPool;
+        });
+    }
 
 
 
