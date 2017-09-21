@@ -31,9 +31,9 @@ class MysqlPool extends Pool
     {
         $this->poolQueue = new splQueue();
         $this->taskQueue = new splQueue();
-        $this->config=$config;
-        $this->maxPool = $config['database']['default']['maxPool'];
-        $this->timeout = $config['database']['default']['timeout'];
+        $this->config=$config['database']['default'];
+        $this->maxPool = $this->config['maxPool'];
+        $this->timeout = $this->config['timeout'];
 
         $this->createResources();
     }
@@ -42,12 +42,12 @@ class MysqlPool extends Pool
     public function createResources()
     {
         $this->config = [
-            'host' => $this->config['database']['default']['hostname'],
-            'port' => $this->config['database']['default']['port'],
-            'user' => $this->config['database']['default']['username'],
-            'password' => $this->config['database']['default']['password'],
-            'database' => $this->config['database']['default']['database'],
-            'charset' => $this->config['database']['default']['char_set'],
+            'host' => $this->config['hostname'],
+            'port' => $this->config['port'],
+            'user' => $this->config['username'],
+            'password' => $this->config['password'],
+            'database' => $this->config['database'],
+            'charset' => $this->config['char_set'],
             'timeout' => $this->timeout,
         ];
 

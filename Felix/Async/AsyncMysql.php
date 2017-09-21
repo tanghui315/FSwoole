@@ -5,7 +5,6 @@ namespace Felix\Async;
 use Config;
 use \Felix\Async\Pool\MysqlProxy;
 use \Felix\Async\Client\Mysql;
-use \Felix\SysCall;
 use \Felix\Task;
 
 class AsyncMysql
@@ -19,16 +18,10 @@ class AsyncMysql
         self::$timeout = $timeout;
     }
 
-   public static function getHandler() {
-        return new SysCall(function(Task $task){
-            $task->send($task->getHandler());
-            $task->run();
-        });
-    }
 
     public static function query($sql, $userPool = true)
     {
-        $handler = (yield self::getHandler());
+        $handler = (yield \Felix\Helper::getHandler());
         if ($userPool && self::$userPool) {
             $pool =$handler->loadMysqlPool();
             $mysql = new MysqlProxy($pool);

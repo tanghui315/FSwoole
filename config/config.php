@@ -73,8 +73,11 @@ return [
     ],
     "smarty"=>true,
     "redis"=>[
-        'enabled'=>false,
-        'host'=>'127.0.0.1',
-        'port'=>6379
+        'default'=>[
+            'host'=>'127.0.0.1',
+            'port'=>6379,
+            'maxPool'=>50,
+            'timeout'=>5,
+        ]
     ]
 ];

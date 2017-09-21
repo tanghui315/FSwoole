@@ -2,7 +2,6 @@
 
 namespace Felix\Async;
 
-use Config;
 use \Felix\Async\Client\Redis;
 use \Felix\Async\Pool\RedisProxy;
 
@@ -30,14 +29,14 @@ class AsyncRedis
      * @return void
      */
     public static function __callStatic($method, $parameters)
-    {   
+    {
+        $handler = (yield \Felix\Helper::getHandler());
         if (self::$usePool) {
-            $pool = app('redisPool');
+            $pool = $handler->loadRedisPool();
             $redis = new RedisProxy($pool);
         } else {
-            $container = (yield getContainer());
             $timeout = self::$timeout;
-            $redis = $container->singleton('redis', function() use ($timeout) {
+            $redis = $handler->singleton('redis', function() use ($timeout) {
                 $redis = new Redis();
                 $redis->setTimeout($timeout);
                 return $redis;

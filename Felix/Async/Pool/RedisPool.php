@@ -2,9 +2,7 @@
 
 namespace Felix\Async\Pool;
 
-use swoole_redis;
 use splQueue;
-use Config;
 use Felix\Async\Pool\Pool;
 
 class RedisPool extends Pool
@@ -30,12 +28,12 @@ class RedisPool extends Pool
 
     protected $timeout = 5;
 
-    public function __construct()
+    public function __construct($config)
     {
         $this->poolQueue = new splQueue();
         $this->taskQueue = new splQueue();
 
-        $this->config = Config::get("database::redis");
+        $this->config = $config['redis']['default'];
         $this->maxPool = $this->config['maxPool'];
         $this->timeout = $this->config['timeout'];
 
@@ -45,16 +43,16 @@ class RedisPool extends Pool
     //初始化连接数
     public function createResources()
     {   
-        $ip = $this->config['default']['host'];
-        $port = $this->config['default']['port'];
-        if (isset($this->config['default']['auth'])) {
-            $this->options['password'] = $this->config['default']['auth'];
+        $ip = $this->config['host'];
+        $port = $this->config['port'];
+        if (isset($this->config['auth'])) {
+            $this->options['password'] = $this->config['auth'];
         }
         $this->options['timeout'] = $this->timeout;
 
         for ($i = $this->ableCount; $i < $this->maxPool; $i++) { 
-            $client = new swoole_redis($this->options);
-            $client->connect($ip, $port, function (swoole_redis $client, $res) {
+            $client = new \Swoole\Redis($this->options);
+            $client->connect($ip, $port, function (\Swoole\Redis $client, $res) {
                 if ($res) {
                     $this->put($client);
                 } else {
@@ -84,7 +82,7 @@ class RedisPool extends Pool
         $method = $task['methd'];
         $parameters = $task['parameters'];
         $callback = $task['callback'];
-        array_push($parameters, function(swoole_redis $client, $res) use ($callback) {
+        array_push($parameters, function(\Swoole\Redis $client, $res) use ($callback) {
             if ($res === false) {
                 call_user_func_array($callback, array('response' => false, 'error' => $client->errMsg));
             } else {

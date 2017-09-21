@@ -8,6 +8,7 @@
 
 namespace Felix;
 use \Felix\Async\Pool\MysqlPool;
+use \Felix\Async\Pool\RedisPool;
 
 class Handler{
 
@@ -166,6 +167,14 @@ class Handler{
       return  $this->singleton('mysqlPool',function(){
             $mysqlPool = new MysqlPool($this->config);
             return $mysqlPool;
+        });
+    }
+    //加载redis连接池
+    function loadRedisPool()
+    {
+        return $this->singleton("redisPool",function(){
+            $redisPool =new RedisPool($this->config);
+            return $redisPool;
         });
     }
 

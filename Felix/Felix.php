@@ -47,9 +47,6 @@ class Felix{
     //运行http服务
     function runHttpServer()
     {
-            if($this->config['redis']['enabled']){
-                Felix\Database\FRedis::init($this->config['redis']);
-            }
             if($this->config['smarty']) {
                 //初始化模版引擎
                 $this->smarty = new Smarty;
@@ -73,9 +70,7 @@ class Felix{
     function runCommand($parameter)
     {
 
-        if($this->config['redis']['enabled']){
-            Felix\Database\FRedis::init($this->config['redis']);
-        }
+
         $cmd=new Felix\Service\CmdServ($this->config);
         $cmd->app_path=$this->app_path;
         $cmd->setLogger(new \Felix\Log\FileLog($this->config["log"]));

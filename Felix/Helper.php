@@ -14,7 +14,7 @@ class Helper{
      * @param $file
      * @return string
      */
-    static public function getFileExt($file)
+    public static function getFileExt($file)
     {
         $s = strrchr($file, '.');
         if ($s === false)
@@ -24,7 +24,7 @@ class Helper{
         return strtolower(trim(substr($s, 1)));
     }
 
-    static public function saveFile($fileName, $text) {
+    public static function saveFile($fileName, $text) {
         if (!$fileName || !$text)
             return false;
         if (self::makeDir(dirname($fileName))) {
@@ -40,8 +40,14 @@ class Helper{
         }
         return false;
     }
+    public static function getHandler() {
+        return new SysCall(function(Task $task){
+            $task->send($task->getHandler());
+            $task->run();
+        });
+    }
 
-    static public function makeDir($dir, $mode=0755) {
+    public static function makeDir($dir, $mode=0755) {
         /*function makeDir($dir, $mode="0777") { 此外0777不能加单引号和双引号，
           加了以后，"0400" = 600权限，处以为会这样，我也想不通*/
         if (!$dir) return false;
