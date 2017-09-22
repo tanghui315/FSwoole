@@ -29,7 +29,8 @@ $config['router']=$router;
 Felix\Loader::addNameSpace('Felix', __DIR__.'/Felix');
 spl_autoload_register('\\Felix\\Loader::autoload');
 
-$felix=new \Felix($config);
+$felix=new \Felix();
+$felix->init($config);
 if(isset($argv[1])){
     $felix->runCommand($argv);
 }else{

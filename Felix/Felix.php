@@ -9,28 +9,41 @@ require_once __DIR__ . '/Loader.php';
 class Felix{
 
     public $app_path;
-    protected $config=array();
+    protected $config=[];
     protected $http_server;
     public  $redis;
     protected $current_handler;
     protected $tag=false;
     public $DB;
     public $smarty;
-    /**
-     * 初始化
-     * @return Felix
-     */
-//    static function getInstance($config)
-//    {
-//        if (!self::$felix)
-//        {
-//            self::$felix = new Felix($config);
-//        }
-//        return self::$felix;
-//    }
+    private static $instance;
+    public $instances;
 
-    function __construct($config)
+    protected $onWorkStartServices = [
+        'mysqlPool'=>'\Felix\Async\Pool\MysqlPool',
+        'redisPool'=>'\Felix\Async\Pool\RedisPool',
+    ];
+    /**
+     * return single class
+     */
+    public static function getInstance()
     {
+        if (!(self::$instance instanceof self)){
+            self::$instance = new self;
+        }
+
+        return self::$instance;
+    }
+    /*
+     * 服务预加载
+     */
+    public function initService()
+    {
+        $this->initSelf();
+        $this->registerProServices();
+    }
+
+    function init($config){
         $this->config=$config;
         if (!defined('DEBUG')) define('DEBUG', 'on');
         if (defined('WEBPATH'))
@@ -41,9 +54,54 @@ class Felix{
         }
         define('APPSPATH', $this->app_path);
         Felix\Loader::addNameSpace('app', $this->app_path . '/');
-
     }
 
+    public function initSelf()
+    {
+        self::$instance = $this;
+    }
+
+    /*
+     * 预构建
+     */
+    public function registerProServices()
+    {
+        foreach ($this->onWorkStartServices as $key=>$service) {
+            $this->singleton($key,function() use ($service){
+                $obj = new $service($this->config);
+                return $obj;
+            });
+        }
+    }
+
+    /*
+    * 构建单例模式
+    *
+    */
+    public function singleton($name, $callable = null)
+    {
+        if (!isset($this->instances[$name]) && $callable) {
+            $this->instances[$name] = call_user_func($callable);
+        }
+
+        return isset($this->instances[$name]) ? $this->instances[$name] : null;
+    }
+
+    /*
+     * 释放单例资源
+     */
+    public function release()
+    {
+        if(!empty($this->instances)){
+            foreach($this->instances as $key=>$instance){
+                if(in_array($key,['redis','mysql','redisPool', 'mysqlPool'])){
+                    $instance->close();
+                }else{
+                    unset($instance);
+                }
+            }
+        }
+    }
     //运行http服务
     function runHttpServer()
     {
@@ -59,7 +117,7 @@ class Felix{
             }
             //启动http服务
             define('FELIX_SERVER', true);
-            $this->http_server=new Felix\Service\HttpServ($this->config);
+            $this->http_server=new Felix\Service\HttpServ($this);
             $this->http_server->smarty=$this->smarty;
             $this->http_server->app_path=$this->app_path;
             $this->http_server->setLogger(new \Felix\Log\FileLog($this->config["log"]));

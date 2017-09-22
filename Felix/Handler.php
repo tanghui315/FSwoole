@@ -15,12 +15,15 @@ class Handler{
     const DATE_FORMAT_HTTP = 'D, d-M-Y H:i:s T';
     protected $serv;
     protected $currentFd;
-    public $instances;
+
     public $config;
     public $query_builder =true;  //启用查询建立
     public $log;
     public $db;
     public $server;
+
+    public $felix;
+
 
 
     function __construct($serv=null)
@@ -31,48 +34,6 @@ class Handler{
             $this->log = $serv->log;
         }
 
-    }
-
-    /*
-     * 构建单例模式
-     *
-     */
-    public function singleton($name, $callable = null)
-    {
-        if (!isset($this->instances[$name]) && $callable) {
-            $this->instances[$name] = call_user_func($callable);
-        }
-
-        return isset($this->instances[$name]) ? $this->instances[$name] : null;
-    }
-
-    /*
-     * 释放单例资源
-     */
-    public function release()
-    {
-        if(!empty($this->instances)){
-            foreach($this->instances as $key=>$instance){
-                if(in_array($key,['redis','mysql'])){
-                    $instance->close();
-                }else{
-                    unset($instance);
-                }
-            }
-        }
-    }
-    /*
-     * 释放链接池
-     */
-    public function releasePool()
-    {
-        if(!empty($this->instances)){
-            foreach($this->instances as $key=>$instance){
-                if(in_array($key,['redisPool', 'mysqlPool'])){
-                    $instance->close();
-                }
-            }
-        }
     }
 
     /**
@@ -107,7 +68,6 @@ class Handler{
     }
 
     // 加载模型
-
     function loadModel($name,$rname='')
     {
         if(empty($name)){
@@ -164,7 +124,7 @@ class Handler{
     //加载mysql连接池
     function loadMysqlPool()
     {
-      return  $this->singleton('mysqlPool',function(){
+      return  $this->felix->singleton('mysqlPool',function(){
             $mysqlPool = new MysqlPool($this->config);
             return $mysqlPool;
         });
@@ -172,7 +132,7 @@ class Handler{
     //加载redis连接池
     function loadRedisPool()
     {
-        return $this->singleton("redisPool",function(){
+        return $this->felix->singleton("redisPool",function(){
             $redisPool =new RedisPool($this->config);
             return $redisPool;
         });

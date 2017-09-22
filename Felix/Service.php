@@ -15,10 +15,12 @@ class Service{
     public $app_path;
     public $maxTaskId;
     public $handler;
+    public $felix;
 
-    function __construct($config = array())
+    function __construct(\Felix $felix)
     {
-        $this->config = $config;
+        $this->felix = $felix;
+        $this->config = $felix->config;
     }
 
     /**
@@ -81,14 +83,14 @@ class Service{
             opcache_reset();
         }
         $this->maxTaskId=0;
-
+        $this->felix->initService();
     }
 
     public function onWorkerStop($serv, $workerId) {}
 
     public function onWorkerExit($serv, $workerId)
     {
-        $this->handler->releasePool();
+        $this->felix->release();
     }
 
 
