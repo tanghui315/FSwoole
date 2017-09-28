@@ -117,7 +117,7 @@ class HttpHandler extends Handler{
     //请求结束
     function afterAction()
     {
-        $this->release();
+        $this->felix->release();
     }
 
     function setcookie($name, $value = null, $expire = null, $path = '/', $domain = null, $secure = null, $httponly = null)
@@ -212,7 +212,7 @@ class HttpHandler extends Handler{
         }
         if(!isset($this->response)){
             log_message("ERR","not defined response");
-            return false;
+            yield false;
         }
         if (!isset($this->head['Date']))
         {
@@ -272,8 +272,7 @@ class HttpHandler extends Handler{
         {
             throw new \Exception($content);
         }
-        return;
-
+        yield true;
     }
 
     function httpError($code,$content=null)
@@ -282,9 +281,9 @@ class HttpHandler extends Handler{
         $this->head['Content-Type'] = 'text/html';
         if(empty($content))
         {
-            $this->response("<h1>Page Not Found</h1><hr />Felix Web Server ");
+            $this->response->end("<h1>Page Not Found</h1><hr />Felix Web Server ");
         }else{
-            $this->response($content);
+            $this->response->end($content);
         }
     }
 

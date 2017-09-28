@@ -16,6 +16,7 @@ class Service{
     public $maxTaskId;
     public $handler;
     public $felix;
+    public $serv;
 
     function __construct(\Felix $felix)
     {
@@ -82,14 +83,26 @@ class Service{
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
-        $this->maxTaskId=0;
-        $this->felix->initService();
+        log_message("sys","WorkerStart".$workerId);
+        if(!$serv->taskworker){
+            $this->maxTaskId=0;
+            $this->felix->initService();
+            $this->felix->registerProServices();
+        }
+
     }
 
-    public function onWorkerStop($serv, $workerId) {}
-
-    public function onWorkerExit($serv, $workerId)
+    function onTask($serv,$task_id,$from_id,$content)
     {
+        
+    }
+
+    function onFinish($serv,$task_id, $content) {
+
+    }
+
+    public function onWorkerStop($serv, $workerId) {
+        log_message("sys","WorkerStop");
         $this->felix->release();
     }
 

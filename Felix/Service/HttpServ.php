@@ -13,7 +13,6 @@ use Felix\Task;
 class HttpServ extends Felix\Service{
 
     const HTTP_EOF = "\r\n\r\n";
-    public $serv;
     public $smarty;
     public $currentHandler;
     public $request;
@@ -31,6 +30,7 @@ class HttpServ extends Felix\Service{
 
     public function onRequest($request,$response)
     {
+        log_message("sys","onRequest");
 
         $this->setGlobal($request);
         $this->request=$request;
@@ -126,13 +126,15 @@ class HttpServ extends Felix\Service{
         }
         if(!empty($handlerAction)){
             $this->handler=new $fclass($this);
+            $this->handler->beforeAction();
             if ($this->maxTaskId >= PHP_INT_MAX) {
                 $this->maxTaskId = 0;
             }
             $taskId = ++$this->maxTaskId;
+            echo $taskId."\n";
             $task =new Task($taskId,$this->handler,$this->terminate($handlerAction));
             $task->run();
-            unset($task);
+            //unset($task);
         }else{
             $fhandler->httpError(404);
         }
@@ -147,7 +149,6 @@ class HttpServ extends Felix\Service{
      */
     public function terminate($handlerAction)
     {
-        yield $this->handler->beforeAction();
         yield $this->handler->$handlerAction();
 
         unset($this->handler);
@@ -164,7 +165,7 @@ class HttpServ extends Felix\Service{
         $this->log->put($errorMsg,4);
         if (empty($this->currentHandler))
         {
-            $this->currentHandler = new Felix\Handler($this);
+            $this->currentHandler = new Felix\Handler\HttpHandler($this);
         }
         $this->currentHandler->setHttpStatus(500);
         $this->currentHandler->body = $message;
@@ -173,18 +174,18 @@ class HttpServ extends Felix\Service{
     }
 
     //异步任务
-    function onTask($serv,$task_id,$from_id,$data)
+    function onTask($serv,$task_id,$from_id,$content)
     {
-
-        if(isset($data['handler'])){
-            $data['handler']->onTask($serv,$task_id,$from_id,$data);
+        parent::onTask($serv,$task_id,$from_id,$content);
+        if($content instanceof \Felix\Handler\TaskContent){
+            $content->getHandler()->onTask($serv,$task_id,$from_id,$content);
         }
-        return $data;
+        return $content;
     }
 
-    function onFinish($serv,$task_id, $data) {
-        if(isset($data['handler'])){
-            $data['handler']->onFinish($serv,$task_id, $data);
+    function onFinish($serv,$task_id, $content) {
+        if($content instanceof \Felix\Handler\TaskContent){
+            $content->getHandler()->onFinish($serv,$task_id, $content);
         }
     }
 
@@ -196,7 +197,6 @@ class HttpServ extends Felix\Service{
         $this->serv = new \Swoole\Http\Server($host, $port);
         $this->serv->on('WorkerStart', [$this, 'onWorkerStart']);
         $this->serv->on('WorkerStop', [$this, 'onWorkerStop']);
-        $this->serv->on('WorkerExit', [$this, 'onWorkerExit']);
         $this->serv->on("Request",[$this,"onRequest"]);
         if(isset($this->config['swoole_server']['task_worker_num'])) {
             $this->serv->on('Task', array($this, 'onTask'));

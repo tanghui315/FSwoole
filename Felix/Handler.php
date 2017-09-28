@@ -9,6 +9,7 @@
 namespace Felix;
 use \Felix\Async\Pool\MysqlPool;
 use \Felix\Async\Pool\RedisPool;
+use Felix\Handler\TaskContent;
 
 class Handler{
 
@@ -23,6 +24,7 @@ class Handler{
     public $server;
 
     public $felix;
+    public $content;
 
 
 
@@ -33,6 +35,7 @@ class Handler{
             $this->config=$serv->config;
             $this->log = $serv->log;
         }
+        $this->content=new TaskContent($this);
 
     }
 

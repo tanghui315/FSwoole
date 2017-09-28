@@ -9,7 +9,7 @@
 namespace app\modules\admin;
 use Felix;
 
-class IndexHandler extends Felix\Handler{
+class IndexHandler extends Felix\Handler\HttpHandler{
 
     public function indexAction(){
         $this->response("<h1>hello Felix Framework,This is Admin Index Page.</h1>");

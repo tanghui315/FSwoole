@@ -18,7 +18,7 @@ class IndexHandler extends Felix\Handler\HttpHandler{
        // $request->response("<h1>hello Felix Framework,This is Index Page.{$word}</h1>");
 //        var_dump($request);
 //        return false;
-        $this->response("<h1>hello Felix Framework,This is Index Page.</h1>");
+       yield $this->response("<h1>hello Felix Framework,This is Index Page.</h1>");
     }
 
     public  function jsonAction(){

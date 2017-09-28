@@ -9,7 +9,7 @@ require_once __DIR__ . '/Loader.php';
 class Felix{
 
     public $app_path;
-    protected $config=[];
+    public $config=[];
     protected $http_server;
     public  $redis;
     protected $current_handler;
@@ -21,7 +21,7 @@ class Felix{
 
     protected $onWorkStartServices = [
         'mysqlPool'=>'\Felix\Async\Pool\MysqlPool',
-        'redisPool'=>'\Felix\Async\Pool\RedisPool',
+        //'redisPool'=>'\Felix\Async\Pool\RedisPool',
     ];
     /**
      * return single class
@@ -40,7 +40,7 @@ class Felix{
     public function initService()
     {
         $this->initSelf();
-        $this->registerProServices();
+       // $this->registerProServices();
     }
 
     function init($config){

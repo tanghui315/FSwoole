@@ -9,9 +9,9 @@
 return [
     "swoole_server"=>[
         "max_request"=>20000,
-        "worker_num"=>2,
+        "worker_num"=>1,
         "keepalive"=>1,
-        "task_worker_num"=>200,
+        "task_worker_num"=>1,
         "daemonize"=>false,
         "pid_file"=>__DIR__."/http_server.pid",
         'buffer_output_size'=>9000000000,
@@ -44,10 +44,10 @@ return [
     "database"=>[
         'default'=>array(
             'dsn'	=> '',
-            'hostname' => '192.168.32.128',
+            'hostname' => '120.27.99.32',
             'username' => 'root',
-            'password' => '123456',
-            'database' => 'applet',
+            'password' => 'mjg5md',
+            'database' => 'hula_game',
             'dbdriver' => 'mysqli',
             'dbprefix' => '',
             'pconnect' => false,
