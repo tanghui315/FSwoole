@@ -72,9 +72,6 @@ class HttpServ extends Felix\Service{
                 if(isset($this->config['router'][$path[0]])){
                     $tstr=$this->config['router'][$path[0]];
                     $path=explode('/', trim($tstr, '/'));
-                }else{
-                    $fhandler->httpError(404);
-                    return false;
                 }
             }
             //print_r($path);

@@ -971,3 +971,6 @@
 [2017-09-28 14:19:50]	ERROR	swoole_mysql::connect(): cannot use async-io in task process. (/Users/tanghui/Documents/workspace/FSwoole/Felix/Async/Pool/MysqlPool.php:62)
 [2017-09-28 15:50:43]	ERROR	swoole_mysql::connect(): cannot use async-io in task process. (/Users/tanghui/Documents/workspace/FSwoole/Felix/Async/Pool/MysqlPool.php:62)
 [2017-09-28 15:53:23]	ERROR	swoole_mysql::connect(): cannot use async-io in task process. (/Users/tanghui/Documents/workspace/FSwoole/Felix/Async/Pool/MysqlPool.php:62)
+[2017-09-28 16:43:50]	ERROR	Call to a member function release() on null (/Users/tanghui/Documents/workspace/FSwoole/Felix/Handler/HttpHandler.php:120)
+[2017-09-28 16:43:55]	ERROR	Call to a member function release() on null (/Users/tanghui/Documents/workspace/FSwoole/Felix/Handler/HttpHandler.php:120)
+[2017-09-28 16:44:03]	ERROR	Call to a member function release() on null (/Users/tanghui/Documents/workspace/FSwoole/Felix/Handler/HttpHandler.php:120)

@@ -117,7 +117,7 @@ class HttpHandler extends Handler{
     //请求结束
     function afterAction()
     {
-        $this->felix->release();
+
     }
 
     function setcookie($name, $value = null, $expire = null, $path = '/', $domain = null, $secure = null, $httponly = null)

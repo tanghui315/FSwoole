@@ -94,7 +94,7 @@ class Service{
 
     function onTask($serv,$task_id,$from_id,$content)
     {
-        
+
     }
 
     function onFinish($serv,$task_id, $content) {
@@ -102,8 +102,10 @@ class Service{
     }
 
     public function onWorkerStop($serv, $workerId) {
-        log_message("sys","WorkerStop");
-        $this->felix->release();
+        log_message("sys","WorkerStop".$workerId);
+        if(!$serv->taskworker) {
+            $this->felix->release();
+        }
     }
 
 
