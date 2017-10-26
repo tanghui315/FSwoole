@@ -1,0 +1,33 @@
+[2017-10-25 17:45:46]	ERROR	Uncaught exception 'Felix\Struct\StructException' with message 'Length of given data (25) is different from length calculated using format string (8).' in /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342
+Stack trace:
+#0 /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructClass.php(76): Felix\Struct\StructTools->unpack('ii', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#1 /Users/tanghui/Documents/workspace/FSwoole/Felix/Message/ProtoMsg.php(19): Felix\Struct\StructClass->unpack('ii', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#2 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(39): Felix\Message\ProtoMsg->parse()
+#3 [internal function]: Felix\Service\WebSocketServ->onMessage(Object(swoole_websocket_server), Object(swoole_websocket_frame))
+#4 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(190): swoole_http_server->start()
+#5 /Users/tanghui/Documents/workspace/FSwoole/Felix/Felix.php(133): Felix\Service\W[E_ERROR](/Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342)
+[2017-10-25 17:49:07]	ERROR	Uncaught exception 'Felix\Struct\StructException' with message 'Length of given data (25) is different from length calculated using format string (8).' in /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342
+Stack trace:
+#0 /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructClass.php(76): Felix\Struct\StructTools->unpack('ii', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#1 /Users/tanghui/Documents/workspace/FSwoole/Felix/Message/ProtoMsg.php(19): Felix\Struct\StructClass->unpack('ii', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#2 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(39): Felix\Message\ProtoMsg->parse()
+#3 [internal function]: Felix\Service\WebSocketServ->onMessage(Object(swoole_websocket_server), Object(swoole_websocket_frame))
+#4 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(190): swoole_http_server->start()
+#5 /Users/tanghui/Documents/workspace/FSwoole/Felix/Felix.php(133): Felix\Service\W[E_ERROR](/Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342)
+[2017-10-25 17:53:03]	ERROR	Uncaught exception 'Felix\Struct\StructException' with message 'Length of given data (25) is different from length calculated using format string (9).' in /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342
+Stack trace:
+#0 /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructClass.php(76): Felix\Struct\StructTools->unpack('iis', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#1 /Users/tanghui/Documents/workspace/FSwoole/Felix/Message/ProtoMsg.php(19): Felix\Struct\StructClass->unpack('iis', '\x00\x00\x00\x11\x00\x00\x00\x01\n\x04test\x12...')
+#2 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(39): Felix\Message\ProtoMsg->parse()
+#3 [internal function]: Felix\Service\WebSocketServ->onMessage(Object(swoole_websocket_server), Object(swoole_websocket_frame))
+#4 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(190): swoole_http_server->start()
+#5 /Users/tanghui/Documents/workspace/FSwoole/Felix/Felix.php(133): Felix\Service[E_ERROR](/Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342)
+[2017-10-25 17:58:15]	ERROR	Uncaught exception 'Felix\Struct\StructException' with message 'Length of given data (7) is different from length calculated using format string (8).' in /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342
+Stack trace:
+#0 /Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructClass.php(76): Felix\Struct\StructTools->unpack('>ii', '\x00\x00\x00\x11\x00\x00\x00')
+#1 /Users/tanghui/Documents/workspace/FSwoole/Felix/Message/ProtoMsg.php(19): Felix\Struct\StructClass->unpack('>ii', '\x00\x00\x00\x11\x00\x00\x00')
+#2 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(39): Felix\Message\ProtoMsg->parse()
+#3 [internal function]: Felix\Service\WebSocketServ->onMessage(Object(swoole_websocket_server), Object(swoole_websocket_frame))
+#4 /Users/tanghui/Documents/workspace/FSwoole/Felix/Service/WebSocketServ.php(190): swoole_http_server->start()
+#5 /Users/tanghui/Documents/workspace/FSwoole/Felix/Felix.php(133): Felix\Service\WebSocketServ->run('0.0.0.0', 9889)
+#6 /Us[E_ERROR](/Users/tanghui/Documents/workspace/FSwoole/Felix/Struct/StructTools.php:342)

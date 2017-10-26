@@ -50,13 +50,15 @@ function lengthInUtf8Bytes(str) {
 //var msg = { type: 1, content: "你是谁", remark: "test pack" };
 //var msgJson = JSON.stringify(msg);
 var message = new testMeg.TestRequest();
+message.setAction("test");
 message.setName("测试1");
 message.setAge(23);
 var bodyBuff = message.serializeBinary();
 var cmd = 0x0001;
 //var len = lengthInUtf8Bytes(body);
 var len = bodyBuff.length;
-var format = '>ii';
+//var format = '>ii';
+var format = 'ii';
 console.log(len);
 console.log(bodyBuff);
 var packed = bp.pack(format, [len, cmd]);
@@ -64,7 +66,7 @@ var headerBuff = packed.buffer;
 var allBuff = mergeArrayBuffer(headerBuff, bodyBuff.buffer);
 console.log(allBuff);
 
-var socket = new WebSocket("ws://127.0.0.1:8087/ws");
+var socket = new WebSocket("ws://127.0.0.1:9889/");
 
 //打开连接时触发
 socket.onopen = function () {

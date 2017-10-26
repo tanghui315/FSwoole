@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 message TestRequest{
-    string name = 1;
-    int32  age = 2;
+    string action = 1;
+    string name= 2;
+    int32  age=3;
 }
 
 message TestResponse{
-    int32  nums = 3;
-    int32  memberId = 4;
+    int32  nums = 4;
+    int32  memberId = 5;
 }

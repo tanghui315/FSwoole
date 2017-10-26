@@ -11,6 +11,7 @@ class Felix{
     public $app_path;
     public $config=[];
     protected $http_server;
+    protected $ws_server;
     public  $redis;
     protected $current_handler;
     protected $tag=false;
@@ -122,6 +123,14 @@ class Felix{
             $this->http_server->app_path=$this->app_path;
             $this->http_server->setLogger(new \Felix\Log\FileLog($this->config["log"]));
             $this->http_server->run($this->config['listen']['host'],$this->config['listen']['port']);
+    }
+
+    //运行websocket服务
+    function runWebSocket()
+    {
+        $this->ws_server= new Felix\Service\WebSocketServ($this);
+        $this->ws_server->setLogger(new \Felix\Log\FileLog($this->config["log"]));
+        $this->ws_server->run($this->config['listen']['host'],$this->config['listen']['port']);
     }
 
     //运行命令行处理

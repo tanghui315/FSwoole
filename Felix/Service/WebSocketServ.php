@@ -8,6 +8,9 @@
 
 namespace Felix\Service;
 use Felix;
+use Felix\Message\JsonMsg;
+use Felix\Message\ProtoMsg;
+use Felix\Task;
 
 class WebSocketServ extends Felix\Service{
 
@@ -15,6 +18,11 @@ class WebSocketServ extends Felix\Service{
     public $response;
     public $currentFd;
     public $request;
+    public $msg;
+    //错误码
+    const MISS_ACTION=5001;
+    const NOT_FOUND_HANDLER=5002;
+    const HANDLER_WRONG=5003; //'The handler type is err,please change to WsHandler'
 
     public function onOpen($server, $req)
     {
@@ -26,8 +34,15 @@ class WebSocketServ extends Felix\Service{
         $this->response=$server;
         $this->currentFd=$frame->fd;
         $data=json_decode($frame->data);
+        if(is_null($data)){
+            $this->msg=new ProtoMsg($this->response,$frame);
+            $data= $this->msg->parse();
+        }else{
+            $this->msg=new JsonMsg($this->response,$frame);
+        }
+
         if(!isset($data['action'])){
-            $this->response->push($frame->fd,json_encode(['code'=>-1,'msg'=>'缺少action']));
+            $this->msg->output(['code'=>self::MISS_ACTION]);
         }
         //判断是不是经过路由映射的连接
         $action=$data['action'];
@@ -36,17 +51,15 @@ class WebSocketServ extends Felix\Service{
             if(isset($this->config['router'][$action])){
                 $tstr=$this->config['router'][$action];
                 $path=explode('/', trim($tstr, '/'));
-            }else{
-                $this->response->push($frame->fd,json_encode(['code'=>-2,'msg'=>'action not found']));
             }
         }
 
-        if(count($path)<3){ //证明不是模块
+        if(count($path)<3){ //证明不是模
             $cword=ucfirst($path[0]);
             $fclass='app\handler\\'."{$cword}Handler";
             $handlerFile=$this->app_path."/handler/{$cword}Handler.php";
             if(!is_file($handlerFile)){
-                $this->response->push($frame->fd,json_encode(['code'=>-3,'msg'=>'handler not found']));
+                $this->msg->output(['code'=>self::NOT_FOUND_HANDLER]);
                 return false;
             }
             if(!isset($path[1])){
@@ -69,7 +82,7 @@ class WebSocketServ extends Felix\Service{
             $fclass="app\\modules\\{$modName}\\"."{$cword}Handler";
             $handlerFile=$this->app_path."/modules/{$modName}/{$cword}Handler.php";
             if(!is_file($handlerFile)){
-                $this->response->push($frame->fd,json_encode(['code'=>-3,'msg'=>'handler not found']));
+                $this->msg->output(['code'=>self::NOT_FOUND_HANDLER]);
                 return false;
             }
             if(!isset($path[3])){
@@ -87,32 +100,58 @@ class WebSocketServ extends Felix\Service{
             }
         }
         if(!empty($handlerAction)){
-            $handler=new $fclass($this);
-            $handler->beforeAction();
-            $handler->$handlerAction();
-            $handler->afterAction();
-            return true;
+            $this->handler=new $fclass($this);
+            if(!$this->handler instanceof \Felix\Handler\WsHandler)
+            {
+                $this->msg->output(['code'=>self::HANDLER_WRONG]);
+                return false;
+            }
+
+            $this->handler->beforeAction();
+            if ($this->maxTaskId >= PHP_INT_MAX) {
+                $this->maxTaskId = 0;
+            }
+            $taskId = ++$this->maxTaskId;
+            $task =new Task($taskId,$this->handler,$this->terminate($handlerAction));
+            $task->run();
+
         }else{
-            $this->response->push($frame->fd,json_encode(['code'=>-3,'msg'=>'handler not found']));
+            $this->msg->output(['code'=>self::NOT_FOUND_HANDLER]);
             return false;
         }
 
+        unset($fhandler);
+        unset($class_reflect);
+        unset($this->request);
+        unset($this->response);
+        return true;
 
     }
+
+    /*
+   * 异步处理
+   */
+    public function terminate($handlerAction)
+    {
+        yield $this->handler->$handlerAction();
+
+        unset($this->handler);
+    }
+
     public function onClose($server, $fd)
     {
 
     }
 
-    //发送消息
-    public function send($client_id,$data,$type="json")
-    {
-        if($type=="json"){
-            $this->serv->push($client_id,json_encode($data));
-        }else{
-            $this->serv->push($client_id,$data);
-        }
-    }
+//    //发送消息
+//    public function send($client_id,$data,$type="json")
+//    {
+//        if($type=="json"){
+//            $this->serv->push($client_id,json_encode($data));
+//        }else{
+//            $this->serv->push($client_id,$data);
+//        }
+//    }
     //广播
     public function broadcast()
     {
@@ -148,6 +187,6 @@ class WebSocketServ extends Felix\Service{
             $this->serv->on('Finish', array($this, 'onFinish'));
         }
         $this->serv->set($this->config['swoole_server']);
-
+        $this->serv->start();
     }
 }

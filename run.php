@@ -32,7 +32,11 @@ spl_autoload_register('\\Felix\\Loader::autoload');
 $felix=new \Felix();
 $felix->init($config);
 if(isset($argv[1])){
-    $felix->runCommand($argv);
+    if($argv[1] == "ws"){
+        $felix->runWebSocket();
+    }else{
+        $felix->runCommand($argv);
+    }
 }else{
     $felix->runHttpServer();
 }

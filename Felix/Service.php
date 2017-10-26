@@ -17,7 +17,8 @@ class Service{
     public $handler;
     public $felix;
     public $serv;
-
+    const JSON_MSG=1;
+    const PROTO_MSG=2;
     function __construct(\Felix $felix)
     {
         $this->felix = $felix;
@@ -39,6 +40,7 @@ class Service{
     function onErrorHandle($errno, $errstr, $errfile, $errline)
     {
         $error = array(
+            'type'=>$errno,
             'message' => $errstr,
             'file' => $errfile,
             'line' => $errline,
@@ -56,10 +58,15 @@ class Service{
         switch ($error['type'])
         {
             case E_ERROR :
+                $error['type']="E_ERROR"; break;
             case E_PARSE :
+                $error['type']="E_PARSE"; break;
             case E_USER_ERROR:
+                $error['type']="E_USER_ERROR"; break;
             case E_CORE_ERROR :
+                $error['type']="E_CORE_ERROR"; break;
             case E_COMPILE_ERROR :
+                $error['type']="E_COMPILE_ERROR";
                 break;
             default:
                 return;
@@ -69,7 +76,7 @@ class Service{
 
     function errorResponse($error)
     {
-        $errorMsg = "{$error['message']} ({$error['file']}:{$error['line']})";
+        $errorMsg = "{$error['message']}[{$error['type']}]({$error['file']}:{$error['line']})";
         $this->log->put($errorMsg,4);
         log_message("Error",$errorMsg);
     }

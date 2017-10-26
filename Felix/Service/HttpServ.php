@@ -122,13 +122,19 @@ class HttpServ extends Felix\Service{
             }
         }
         if(!empty($handlerAction)){
+
             $this->handler=new $fclass($this);
+            if(!$this->handler instanceof \Felix\Handler\HttpHandler)
+            {
+                $fhandler->httpError(500,"The handler type is err,please change to HttpHandler");
+                return false;
+            }
+
             $this->handler->beforeAction();
             if ($this->maxTaskId >= PHP_INT_MAX) {
                 $this->maxTaskId = 0;
             }
             $taskId = ++$this->maxTaskId;
-            echo $taskId."\n";
             $task =new Task($taskId,$this->handler,$this->terminate($handlerAction));
             $task->run();
             //unset($task);
