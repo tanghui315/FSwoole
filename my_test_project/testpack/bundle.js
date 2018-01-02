@@ -180,9 +180,8 @@ proto.TestRequest.prototype.toObject = function(opt_includeInstance) {
  */
 proto.TestRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    action: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    name: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    age: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    age: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -221,13 +220,9 @@ proto.TestRequest.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setAction(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setAge(value);
       break;
@@ -259,24 +254,17 @@ proto.TestRequest.prototype.serializeBinary = function() {
  */
 proto.TestRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getAction();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getName();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
   f = message.getAge();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      2,
       f
     );
   }
@@ -284,47 +272,32 @@ proto.TestRequest.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string action = 1;
+ * optional string name = 1;
  * @return {string}
  */
-proto.TestRequest.prototype.getAction = function() {
+proto.TestRequest.prototype.getName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.TestRequest.prototype.setAction = function(value) {
+proto.TestRequest.prototype.setName = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 
 
 /**
- * optional string name = 2;
- * @return {string}
- */
-proto.TestRequest.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/** @param {string} value */
-proto.TestRequest.prototype.setName = function(value) {
-  jspb.Message.setField(this, 2, value);
-};
-
-
-/**
- * optional int32 age = 3;
+ * optional int32 age = 2;
  * @return {number}
  */
 proto.TestRequest.prototype.getAge = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /** @param {number} value */
 proto.TestRequest.prototype.setAge = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setField(this, 2, value);
 };
 
 
@@ -374,8 +347,8 @@ proto.TestResponse.prototype.toObject = function(opt_includeInstance) {
  */
 proto.TestResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    nums: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    memberid: jspb.Message.getFieldWithDefault(msg, 5, 0)
+    nums: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    memberid: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -412,11 +385,11 @@ proto.TestResponse.deserializeBinaryFromReader = function(msg, reader) {
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 4:
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setNums(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setMemberid(value);
       break;
@@ -451,14 +424,14 @@ proto.TestResponse.serializeBinaryToWriter = function(message, writer) {
   f = message.getNums();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
   f = message.getMemberid();
   if (f !== 0) {
     writer.writeInt32(
-      5,
+      4,
       f
     );
   }
@@ -466,32 +439,32 @@ proto.TestResponse.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional int32 nums = 4;
+ * optional int32 nums = 3;
  * @return {number}
  */
 proto.TestResponse.prototype.getNums = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
 /** @param {number} value */
 proto.TestResponse.prototype.setNums = function(value) {
-  jspb.Message.setField(this, 4, value);
+  jspb.Message.setField(this, 3, value);
 };
 
 
 /**
- * optional int32 memberId = 5;
+ * optional int32 memberId = 4;
  * @return {number}
  */
 proto.TestResponse.prototype.getMemberid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
 /** @param {number} value */
 proto.TestResponse.prototype.setMemberid = function(value) {
-  jspb.Message.setField(this, 5, value);
+  jspb.Message.setField(this, 4, value);
 };
 
 
@@ -550,15 +523,15 @@ function lengthInUtf8Bytes(str) {
 //var msg = { type: 1, content: "你是谁", remark: "test pack" };
 //var msgJson = JSON.stringify(msg);
 var message = new testMeg.TestRequest();
-message.setAction("test");
+//message.setAction("test");
 message.setName("测试1");
 message.setAge(23);
 var bodyBuff = message.serializeBinary();
-var cmd = 0x0001;
+var cmd = 0;
 //var len = lengthInUtf8Bytes(body);
 var len = bodyBuff.length;
 //var format = '>ii';
-var format = 'ii';
+var format = 'IH';
 console.log(len);
 console.log(bodyBuff);
 var packed = bp.pack(format, [len, cmd]);
@@ -566,7 +539,7 @@ var headerBuff = packed.buffer;
 var allBuff = mergeArrayBuffer(headerBuff, bodyBuff.buffer);
 console.log(allBuff);
 
-var socket = new WebSocket("ws://127.0.0.1:9889/");
+var socket = new WebSocket("ws://127.0.0.1:3653/");
 
 //打开连接时触发
 socket.onopen = function () {

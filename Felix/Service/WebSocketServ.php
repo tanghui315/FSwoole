@@ -36,6 +36,7 @@ class WebSocketServ extends Felix\Service{
         $data=json_decode($frame->data);
         if(is_null($data)){
             $this->msg=new ProtoMsg($this->response,$frame);
+            $this->msg->setRouter($this->config['ws_router']);
             $data= $this->msg->parse();
         }else{
             $this->msg=new JsonMsg($this->response,$frame);
