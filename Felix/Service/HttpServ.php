@@ -57,7 +57,7 @@ class HttpServ extends Felix\Service{
             if($tag==1)
             {
                 //这里最好是判断请求，如果是移动端就不要压缩
-                $fhandler::$gzip=false;
+                $fhandler->gzip=false;
                 return true;
             }elseif($tag==-1)
             {

@@ -19,7 +19,7 @@ class HttpHandler extends Handler{
     protected $static_dir;
     protected $static_ext;
     protected $document_root;
-    protected $gzip=false;
+    public $gzip=false;
     protected $expire=false;
     public $head;
     public $cookie;
@@ -184,7 +184,7 @@ class HttpHandler extends Handler{
                         $this->head['Content-Type'] = $this->mime_types[$ext_name];
                     }
                 }
-                $this->response();
+                $this->nmResponse();
                 return 1;
             }
             else
@@ -196,6 +196,83 @@ class HttpHandler extends Handler{
 
         return -2;
 
+    }
+
+    function nmResponse($content="",$iserr=false)
+    {
+        if(is_array($content))
+        {
+            $content=json_encode($content);
+            $isjson=true;
+        }else{
+            $isjson=false;
+        }
+        if(!empty($content)){
+            $this->body=$content;
+        }
+        if(!isset($this->response)){
+            log_message("ERR","not defined response");
+            return false;
+        }
+        if (!isset($this->head['Date']))
+        {
+            $this->response->header('Date',gmdate("D, d M Y H:i:s T"));
+        }
+        if($isjson)
+        {
+            $this->response->header('Content-Type','application/json;charset='.$this->charset);
+            $this->gzip=false;
+        }else{
+            $this->gzip=true;
+        }
+
+        if (!isset($this->head['Connection']))
+        {
+            //keepalive
+            if ($this->keepalive and (isset($this->request->header['connection']) and strtolower($this->request->header['connection']) == 'keep-alive'))
+            {
+                $this->response->header('KeepAlive','on');
+                $this->response->header('Connection','keep-alive');
+            }
+            else
+            {
+                $this->response->header('KeepAlive','off');
+                $this->response->header('Connection','close');
+            }
+        }
+
+        $this->response->status($this->http_status);
+        if (!isset($this->head['Server']))
+        {
+            $this->response->header('Server','felix-2.0');
+        }
+        if (!isset($this->head['Content-Type']))
+        {
+            $this->response->header('Content-Type','text/html; charset='.$this->charset);
+        }else{
+            $this->response->header('Content-Type',$this->head['Content-Type']);
+        }
+
+        if (!empty($this->cookie) and is_array($this->cookie))
+        {
+            foreach($this->cookie as $v)
+            {
+                $this->response->cookie($v['name'],$v['value'],$v['expire'],$v['path'],$v['domain'],$v['secure'],$v['httponly']);
+            }
+        }
+        if ($this->gzip)
+        {
+            // $this->response->header('Content-Encoding','deflate');
+            $this->response->gzip(1);
+        }
+
+        $this->response->end($this->body);
+        $this->afterAction();
+        if($iserr)
+        {
+            throw new \Exception($content);
+        }
+        return true;
     }
 
     function response($content="",$iserr=false)
@@ -305,7 +382,7 @@ class HttpHandler extends Handler{
         }
         $this->smarty->clearCache($src);
         $output=$this->smarty->fetch($src);
-        $this->response($output);
+        yield $this->response($output);
     }
 
 }

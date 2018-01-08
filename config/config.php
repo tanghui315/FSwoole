@@ -44,10 +44,10 @@ return [
     "database"=>[
         'default'=>array(
             'dsn'	=> '',
-            'hostname' => '120.27.99.32',
+            'hostname' => '127.0.0.1',
             'username' => 'root',
-            'password' => 'mjg5md',
-            'database' => 'hula_game',
+            'password' => 'tanghui315',
+            'database' => 'pvp_wzry',
             'dbdriver' => 'mysqli',
             'dbprefix' => '',
             'pconnect' => false,

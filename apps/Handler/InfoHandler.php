@@ -18,7 +18,7 @@ class InfoHandler extends Felix\Handler\HttpHandler{
 
        // $this->response("<h1>hello ,this is Info Page</h1>");
         //测试模版
-        $this->render("vote/test.html",['title'=>'这是一个标题','msg'=>'模版内容']);
+       yield $this->render("vote/test.html",['title'=>'这是一个标题','msg'=>'模版内容']);
     }
 
     //车是model
