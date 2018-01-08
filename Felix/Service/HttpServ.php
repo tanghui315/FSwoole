@@ -98,19 +98,19 @@ class HttpServ extends Felix\Service{
                 }
             }else{ //模块处理
                 //0  是flag 标记
-                $modName=strtolower($path[1]);
-                $cword=ucfirst($path[2]);
+                $modName=strtolower($path[0]);
+                $cword=ucfirst($path[1]);
                 $fclass="app\\modules\\{$modName}\\"."{$cword}Handler";
                 $handlerFile=$this->app_path."/modules/{$modName}/{$cword}Handler.php";
                 if(!is_file($handlerFile)){
                     $fhandler->httpError(404);
                     return false;
                 }
-                if(!isset($path[3])){
+                if(!isset($path[2])){
                     $handlerAction="indexAction";
                 }else{
                     $class_reflect = new \ReflectionClass($fclass);
-                    $action_name=strtolower($path[3]."action");
+                    $action_name=strtolower($path[2]."action");
                     foreach($class_reflect->getMethods() as $method){
                         $cMName=$method->getName();
                         $tmpName=strtolower($cMName);
