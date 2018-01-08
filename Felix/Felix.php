@@ -138,7 +138,7 @@ class Felix{
     {
 
 
-        $cmd=new Felix\Service\CmdServ($this->config);
+        $cmd=new Felix\Service\CmdServ($this);
         $cmd->app_path=$this->app_path;
         $cmd->setLogger(new \Felix\Log\FileLog($this->config["log"]));
         $cmd->run($parameter);
