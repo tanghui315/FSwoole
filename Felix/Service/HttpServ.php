@@ -31,12 +31,20 @@ class HttpServ extends Felix\Service{
     public function onRequest($request,$response)
     {
         log_message("sys","onRequest");
-
+        if($request->server["request_method"]=="OPTIONS"){ //不处理option
+            $response->header("Access-Control-Allow-Origin","*");
+            $response->header("Access-Control-Allow-Credentials","true");
+            $response->header("Access-Control-Allow-Headers","Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With");
+            $response->header("Access-Control-Allow-Methods","POST, OPTIONS, GET, PUT");
+            $response->header("Access-Control-Max-Age",6888686868);
+            $response->status(204);
+            return true;
+        }
         $this->setGlobal($request);
         $this->request=$request;
         $this->response=$response;
         //获取body
-        list($tmphead, $request->body) = explode(self::HTTP_EOF, $request->data, 2);
+        list($tmphead, $request->body) = explode(self::HTTP_EOF, isset($request->data)?$request->data:$request->getData(), 2);
        // $info=$server->currentRequest;
         $fhandler=new Felix\Handler\HttpHandler($this);
         $url=strtolower($request->server['path_info']);
